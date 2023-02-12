@@ -2,54 +2,70 @@ package main
 
 import (
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/term"
-	"log"
 	"os"
 	"time"
+
+	"golang.org/x/term"
+
+	"github.com/charmbracelet/bubbles/viewport"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
-func main() {
-	// Initialize our program
-	p := tea.NewProgram(&model{100, 100}, tea.WithMouseAllMotion())
-	if _, err := p.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
+var borderStyle = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder())
+var textStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("45"))
+
+type tickMsg int
 
 type model struct {
 	w, h int
+	vp   viewport.Model
 }
 
-// Init optionally returns an initial command we should run. In this case we
-// want to start the timer.
+func tick() tea.Msg {
+	time.Sleep(time.Second / 4)
+	return tickMsg(1)
+}
+
 func (m *model) Init() tea.Cmd {
-	m.updateSize()
-	return tick
+	return tea.Batch(tick)
 }
 
-// Update is called when messages are received. In this case we're going to
-// listen to 'tick' messages and check to see if the window size has changed.
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg.(type) {
 	case tickMsg:
-		m.updateSize()
-		return m, tick
+		w, h, _ := term.GetSize(int(os.Stdout.Fd()))
+		if w != m.w || h != m.h {
+			m.updateSize(w, h)
+		}
+		resize := func() tea.Msg { return tea.WindowSizeMsg{Width: w, Height: h} }
+		return m, tea.Batch(tick, resize)
 	}
 	return m, nil
 }
 
 func (m *model) View() string {
-	return fmt.Sprintf("Size: %d, %d", m.w, m.h)
+	return m.vp.View()
 }
 
-func (m *model) updateSize() {
-	m.w, m.h, _ = term.GetSize(int(os.Stdout.Fd()))
+func (m *model) updateSize(w, h int) {
+	m.w = w
+	m.h = h
+
+	m.vp = viewport.New(m.w, m.h)
+	m.vp.Style = borderStyle
+
+	text := fmt.Sprintf("Size: %d, %d", m.w, m.h)
+	rendered := textStyle.Copy().Width(m.w).Height(m.h).Render(text)
+	m.vp.SetContent(rendered)
+
+	tea.ClearScreen()
 }
 
-type tickMsg int
-
-func tick() tea.Msg {
-	time.Sleep(time.Second / 4)
-	return tickMsg(1)
+func main() {
+	m := &model{w: 1, h: 1, vp: viewport.New(1, 1)}
+	p := tea.NewProgram(m)
+	if _, err := p.Run(); err != nil {
+		fmt.Print(err)
+	}
 }
