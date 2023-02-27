@@ -1,0 +1,44 @@
+			
+
+
+			// Raw Materials
+
+			Nutrients(◬)		125	-13
+			Fibers(☙)		233	 +4
+			Minerals(⯁)		2401	-124
+			Rare Metals(⬙)		120	-14
+			Mythril(❖)		24  	-3
+			
+			// Refined Materials
+			
+			Cloth(▨)		120	+24
+			Ghostweave(▩)		540	-12
+			Plasteel(🞜) 		234     +92
+			MoonMetal(◈)		123	-12
+			DreamGlass(◇)		120	-20
+			
+			// Fuels
+			
+			Fossil Fuels((🛢︎)		4120	-13
+			Brutine() 		123   	-12
+			Antimatter() 		123	+23
+			
+			// Energy
+
+			Energy(🗲)		123	-24
+			
+			// Goods
+
+			Hard Goods(▣)		40	-231
+			Amenities(♫)		1239	-203
+			Luxury Goods(✧)		230	 +2
+			Medicine(⛨)		124	+92
+			Drugs(🕱)		23	-4
+			Weapons(†)		410	-213
+			Heavy Weapons(♜)	20	+14
+			
+			// Labor
+			
+			Services(⛏)		1204	120
+			Engineering(🛠)		1243	-20
+			Slaves(☹)               120     +24

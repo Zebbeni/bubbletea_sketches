@@ -69,7 +69,7 @@ func (m Manager) View() string {
 	}
 
 	tabBlock := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)
-	extW, extH := max(m.w-lipgloss.Width(tabBlock)-5, 0), 1
+	extW, extH := max(m.w-lipgloss.Width(tabBlock)-4, 0), 1
 
 	border := lipgloss.Border{BottomLeft: "─", Bottom: "─", BottomRight: "┐"}
 	extendedStyle := windowStyle.Copy().Border(border).Padding(0, 0, 0, 0)
