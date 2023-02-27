@@ -2,11 +2,29 @@ package main
 
 import (
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/list"
 	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
+	directory string
+
+	list list.Model
+}
+
+func New() model {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting the current directory:", err)
+		os.Exit(1)
+	}
+
+	return model{
+		directory: dir,
+		list:      NewList(dir),
+	}
 }
 
 func (m model) Init() tea.Cmd {
@@ -14,15 +32,17 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return m, nil
+	var cmd tea.Cmd
+	m.list, cmd = m.list.Update(msg)
+	return m, cmd
 }
 
 func (m model) View() string {
-	return "browser"
+	return m.list.View()
 }
 
 func main() {
-	m := model{}
+	m := New()
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program", err)
