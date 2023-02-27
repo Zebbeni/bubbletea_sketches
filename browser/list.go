@@ -2,24 +2,30 @@ package main
 
 import (
 	"fmt"
-	"github.com/Zebbeni/bubbletea_sketches/browser/item"
-	"github.com/charmbracelet/bubbles/list"
 	"os"
 	"path/filepath"
+
+	"github.com/charmbracelet/bubbles/list"
+
+	"github.com/Zebbeni/bubbletea_sketches/browser/item"
 )
 
 const (
-	width  = 20
+	width  = 40
 	height = 20
 )
 
 var (
-	acceptedFileExts = []string{".jpg", ".png"}
+	acceptedFileExts = []string{".jpg", ".png", ".go"}
 )
 
 func NewList(directory string) list.Model {
 	items := buildItems(directory)
-	return list.New(items, list.NewDefaultDelegate(), width, height)
+	delegate := list.NewDefaultDelegate()
+	delegate.ShowDescription = false
+	delegate.SetHeight(1)
+	delegate.SetSpacing(0)
+	return list.New(items, delegate, width, height)
 }
 
 func buildItems(dir string) []list.Item {
@@ -33,19 +39,19 @@ func buildItems(dir string) []list.Item {
 	dirBaseName := fmt.Sprintf("../%s", filepath.Base(dir))
 	dirParentName := filepath.Dir(dir)
 	dirItems := []list.Item{
-		item.New(dirBaseName, dirParentName),
+		item.New(dirBaseName, dirParentName, true),
 	}
 	fileItems := make([]list.Item, 0)
 
 	for _, entry := range entries {
 		fullPath := filepath.Join(dir, entry.Name())
 		if entry.IsDir() {
-			dirItems = append(dirItems, item.New(entry.Name(), fullPath))
+			dirItems = append(dirItems, item.New(entry.Name(), fullPath, true))
 			continue
 		}
 		for _, ext := range acceptedFileExts {
 			if filepath.Ext(entry.Name()) == ext {
-				fileItems = append(fileItems, item.New(entry.Name(), fullPath))
+				fileItems = append(fileItems, item.New(entry.Name(), fullPath, false))
 				continue
 			}
 		}

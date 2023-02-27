@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/Zebbeni/bubbletea_sketches/browser/io"
+	"github.com/Zebbeni/bubbletea_sketches/browser/item"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"os"
 
@@ -12,6 +16,8 @@ type model struct {
 	directory string
 
 	list list.Model
+
+	keymap help.KeyMap
 }
 
 func New() model {
@@ -33,6 +39,22 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, io.KeyMap.Enter):
+			i, ok := m.list.SelectedItem().(item.Model)
+			if !ok {
+				return m, tea.Quit
+			}
+			if i.IsDir {
+				m.directory = i.Path
+				m.list = NewList(m.directory)
+			}
+		}
+	}
+
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
@@ -42,6 +64,7 @@ func (m model) View() string {
 }
 
 func main() {
+	io.InitKeyMap()
 	m := New()
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {

@@ -1,22 +1,23 @@
 package item
 
 type Model struct {
-	name string
-	path string
+	Name  string
+	Path  string
+	IsDir bool
 }
 
-func New(n, d string) Model {
-	return Model{name: n, path: d}
+func New(n, d string, isDir bool) Model {
+	return Model{Name: n, Path: d, IsDir: isDir}
 }
 
 func (i Model) Title() string {
-	return i.name
+	return i.Name
 }
 
 func (i Model) Description() string {
-	return i.path
+	return i.Path
 }
 
 func (i Model) FilterValue() string {
-	return i.name
+	return i.Name
 }
