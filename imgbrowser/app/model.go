@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -11,12 +12,14 @@ import (
 
 type Model struct {
 	browser browser.Model
+	viewer  viewer.Model
 	w, h    int
 }
 
 func New() Model {
 	return Model{
 		browser: browser.New(),
+		viewer:  viewer.New(),
 		w:       100,
 		h:       100,
 	}
@@ -45,11 +48,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	vp := viewport.New(m.w, m.h)
-
 	browser := m.browser.View()
-	vp.SetContent(lipgloss.NewStyle().Width(m.w).Height(m.h).Render(browser))
+	vpLeft := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
+	vpLeft.SetContent(lipgloss.NewStyle().
+		Width(m.leftPanelWidth()).
+		Height(m.leftPanelHeight()).
+		Render(browser))
+	panelLeft := vpLeft.View()
 
+	viewer := m.viewer.View()
+	vpRight := viewport.New(m.rightPanelWidth(), m.rightPanelHeight())
+	vpRight.SetContent(lipgloss.NewStyle().
+		Width(m.rightPanelWidth()).
+		Height(m.rightPanelHeight()).
+		Render(viewer))
+	panelRight := vpRight.View()
+
+	content := lipgloss.JoinHorizontal(lipgloss.Top, panelLeft, panelRight)
+
+	vp := viewport.New(m.w, m.h)
+	vp.SetContent(content)
 	vp.Style = lipgloss.NewStyle().Width(m.w).Height(m.h).BorderStyle(lipgloss.RoundedBorder())
 	return vp.View()
 }

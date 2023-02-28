@@ -3,7 +3,7 @@ package app
 import (
 	"os"
 	"time"
-	
+
 	"golang.org/x/term"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,9 +44,17 @@ func pollForSizeChange() tea.Msg {
 }
 
 func (m Model) leftPanelWidth() int {
-	return 25
+	return 30
+}
+
+func (m Model) leftPanelHeight() int {
+	return m.h
 }
 
 func (m Model) rightPanelWidth() int {
 	return m.w - m.leftPanelWidth()
+}
+
+func (m Model) rightPanelHeight() int {
+	return m.h
 }
