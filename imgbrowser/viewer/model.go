@@ -1,8 +1,8 @@
 package viewer
 
 import (
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/process"
 	tea "github.com/charmbracelet/bubbletea"
-	"time"
 )
 
 type FileMsg string
@@ -57,13 +57,13 @@ func (m Model) handleRenderMsg(msg RenderMsg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	if m.isWaitingOnRender {
-		return "rendering..."
+		return ""
 	}
-	return "done: " + m.renderString
+	return m.renderString
 }
 
 func (m Model) msgWhenRendered() tea.Msg {
-	time.Sleep(time.Second)
+	rendered := process.RenderImageFile(m.filePath)
 	// kick off a render job
-	return RenderMsg{Path: m.filePath, Rendered: m.filePath}
+	return RenderMsg{Path: m.filePath, Rendered: rendered}
 }

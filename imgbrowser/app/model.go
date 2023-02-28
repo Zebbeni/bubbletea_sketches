@@ -62,6 +62,7 @@ func (m Model) View() string {
 	vpRight.SetContent(lipgloss.NewStyle().
 		Width(m.rightPanelWidth()).
 		Height(m.rightPanelHeight()).
+		Align(lipgloss.Center).
 		Render(viewer))
 	panelRight := vpRight.View()
 
