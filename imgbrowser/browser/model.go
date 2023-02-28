@@ -2,12 +2,14 @@ package browser
 
 import (
 	"fmt"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
+	"os"
+	"path/filepath"
+	
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"os"
-	"path/filepath"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
 type Model struct {

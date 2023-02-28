@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	tea "github.com/charmbracelet/bubbletea"
-	"os"
 )
 
 func init() {

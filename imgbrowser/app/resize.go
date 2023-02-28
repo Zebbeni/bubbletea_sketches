@@ -1,10 +1,12 @@
 package app
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/term"
 	"os"
 	"time"
+	
+	"golang.org/x/term"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // There is (currently) no support on Windows for detecting resize events, so
@@ -39,4 +41,12 @@ func (m Model) handleCheckSizeMsg() (Model, tea.Cmd) {
 func pollForSizeChange() tea.Msg {
 	time.Sleep(resizeCheckDuration)
 	return checkSizeMsg(1)
+}
+
+func (m Model) leftPanelWidth() int {
+	return 25
+}
+
+func (m Model) rightPanelWidth() int {
+	return m.w - m.leftPanelWidth()
 }

@@ -1,11 +1,12 @@
 package app
 
 import (
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
 )
 
 type Model struct {
