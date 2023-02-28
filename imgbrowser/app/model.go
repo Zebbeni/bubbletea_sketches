@@ -35,16 +35,17 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		return m.handleSizeMsg(msg)
 	case checkSizeMsg:
 		return m.handleCheckSizeMsg()
 	case tea.KeyMsg:
-		m.browser, cmd = m.browser.Update(msg)
+		return m.handleKeyMsg(msg)
+	case viewer.RenderMsg:
+		return m.handleRenderMsg(msg)
 	}
-	return m, cmd
+	return m, nil
 }
 
 func (m Model) View() string {

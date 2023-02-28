@@ -13,8 +13,8 @@ import (
 )
 
 type Model struct {
-	dirPath  string
-	filePath string
+	Dir  string
+	File string
 
 	list list.Model
 }
@@ -26,7 +26,7 @@ func New() Model {
 		os.Exit(1)
 	}
 
-	m := Model{dirPath: dir, list: buildList(dir)}
+	m := Model{Dir: dir, list: buildList(dir)}
 	return m
 }
 
@@ -38,7 +38,7 @@ func buildList(dir string) list.Model {
 	}
 
 	parentPath := filepath.Dir(dir)
-	parentName := fmt.Sprintf("%s/", filepath.Base(parentPath))
+	parentName := fmt.Sprintf("←%s/", filepath.Base(parentPath))
 	parentItem := item{name: parentName, path: parentPath, isDir: true}
 
 	dirItems := []list.Item{parentItem}
@@ -89,10 +89,10 @@ func (m Model) selectCurrentItem() Model {
 		panic("Unexpected list item type")
 	}
 	if i.isDir {
-		m.dirPath = i.path
-		m.list = buildList(m.dirPath)
+		m.Dir = i.path
+		m.list = buildList(m.Dir)
 	} else {
-		m.filePath = i.path
+		m.File = i.path
 	}
 	return m
 }
