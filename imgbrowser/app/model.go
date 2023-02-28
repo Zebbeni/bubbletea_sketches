@@ -8,6 +8,7 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/message"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
@@ -43,6 +44,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.handleSizeMsg(msg)
 	case checkSizeMsg:
 		return m.handleCheckSizeMsg()
+	case message.BackMsg:
+		return m.handleBackMsg()
 	case tea.KeyMsg:
 		return m.handleKeyMsg(msg)
 	case viewer.RenderMsg:

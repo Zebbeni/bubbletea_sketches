@@ -21,6 +21,11 @@ func (m Model) handleKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
+func (m Model) handleBackMsg() (Model, tea.Cmd) {
+	m.menu = m.menu.SetState(menu.MainMenu)
+	return m, nil
+}
+
 func (m Model) handleRenderMsg(msg viewer.RenderMsg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.viewer, cmd = m.viewer.Update(msg)

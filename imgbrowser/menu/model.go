@@ -52,6 +52,11 @@ func (m Model) View() string {
 	return m.list.View()
 }
 
+func (m Model) SetState(state State) Model {
+	m.State = state
+	return m
+}
+
 func (m Model) handleKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch {
