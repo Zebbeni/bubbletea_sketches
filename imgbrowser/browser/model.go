@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	
+
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -57,7 +57,10 @@ func buildList(dir string) list.Model {
 	}
 
 	items := append(dirItems, fileItems...)
-	return list.New(items, list.NewDefaultDelegate(), 30, 30)
+	l := list.New(items, NewDelegate(), 30, 30)
+	l.SetShowHelp(false)
+
+	return l
 }
 
 func (m Model) Init() tea.Cmd {
