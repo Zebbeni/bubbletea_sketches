@@ -1,16 +1,18 @@
 package app
 
 import (
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
 type Model struct {
+	menu    menu.Model
 	browser browser.Model
 	viewer  viewer.Model
 	w, h    int
@@ -18,6 +20,7 @@ type Model struct {
 
 func New() Model {
 	return Model{
+		menu:    menu.New(),
 		browser: browser.New(),
 		viewer:  viewer.New(),
 		w:       100,
@@ -49,12 +52,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	browser := m.browser.View()
 	vpLeft := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
+	var leftContent string
+	switch m.menu.State {
+	case menu.MainMenu:
+		leftContent = m.menu.View()
+	case menu.FileMenu:
+		leftContent = m.browser.View()
+	}
 	vpLeft.SetContent(lipgloss.NewStyle().
 		Width(m.leftPanelWidth()).
 		Height(m.leftPanelHeight()).
-		Render(browser))
+		Render(leftContent))
 	panelLeft := vpLeft.View()
 
 	viewer := m.viewer.View()
@@ -63,6 +72,7 @@ func (m Model) View() string {
 		Width(m.rightPanelWidth()).
 		Height(m.rightPanelHeight()).
 		Align(lipgloss.Center).
+		AlignVertical(lipgloss.Center).
 		Render(viewer))
 	panelRight := vpRight.View()
 
