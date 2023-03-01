@@ -3,13 +3,13 @@ package browser
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/message"
 )
 
 type Model struct {
@@ -27,8 +27,9 @@ func New() Model {
 	}
 
 	browserList := list.New(getItems(dir), NewDelegate(), 30, 30)
+	browserList.Title = fmt.Sprintf("/%s", path.Base(dir))
 	browserList.SetShowHelp(false)
-	browserList.SetShowTitle(false)
+	browserList.SetShowStatusBar(false)
 
 	browserList.KeyMap.ForceQuit.Unbind()
 	browserList.KeyMap.Quit.Unbind()
@@ -47,29 +48,35 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Esc):
-			return m, message.BackCmd
+			return m, io.BackCmd
 		case key.Matches(msg, io.KeyMap.Enter):
-			m = m.selectCurrentItem()
+			m = m.selectCurrentItem(true)
 			return m, nil
 		default:
 			m.list, cmd = m.list.Update(msg)
+			m = m.selectCurrentItem(false)
 			return m, cmd
 		}
 	}
 	return m, nil
 }
 
-func (m Model) selectCurrentItem() Model {
+func (m Model) selectCurrentItem(selectDirectories bool) Model {
 	i, ok := m.list.SelectedItem().(item)
 	if !ok {
 		panic("Unexpected list item type")
 	}
+
 	if i.isDir {
-		m.Dir = i.path
-		m.list.SetItems(getItems(m.Dir))
+		if selectDirectories {
+			m.Dir = i.path
+			m.list.Title = i.name
+			m.list.SetItems(getItems(m.Dir))
+		}
 	} else {
 		m.File = i.path
 	}
+
 	return m
 }
 
