@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/lipgloss"
 )
 
 var imgExtensions = []string{".jpg", ".png"}
@@ -14,6 +15,7 @@ type item struct {
 	name  string
 	path  string
 	isDir bool
+	isTop bool
 }
 
 func (i item) FilterValue() string {
@@ -21,6 +23,13 @@ func (i item) FilterValue() string {
 }
 
 func (i item) Title() string {
+	if i.isTop {
+		t := fmt.Sprintf("← to %s/", i.name)
+		return lipgloss.NewStyle().Foreground(lipgloss.Color("103")).Render(t)
+	}
+	if i.isDir {
+		return fmt.Sprintf("%s/", i.name)
+	}
 	return i.name
 }
 
@@ -39,8 +48,8 @@ func getItems(dir string) []list.Item {
 	}
 
 	parentPath := filepath.Dir(dir)
-	parentName := fmt.Sprintf("←%s/", filepath.Base(parentPath))
-	parentItem := item{name: parentName, path: parentPath, isDir: true}
+	parentName := filepath.Base(parentPath)
+	parentItem := item{name: parentName, path: parentPath, isDir: true, isTop: true}
 
 	dirItems := []list.Item{parentItem}
 	fileItems := make([]list.Item, 0)
@@ -49,15 +58,15 @@ func getItems(dir string) []list.Item {
 		path := fmt.Sprintf("%s/%s", dir, e.Name())
 
 		if e.IsDir() {
-			name := fmt.Sprintf("%s/", e.Name())
-			dirItem := item{name: name, path: path, isDir: true}
+			name := e.Name()
+			dirItem := item{name: name, path: path, isDir: true, isTop: false}
 			dirItems = append(dirItems, dirItem)
 			continue
 		}
 
 		for _, ext := range imgExtensions {
 			if filepath.Ext(e.Name()) == ext {
-				fileItem := item{name: e.Name(), path: path, isDir: false}
+				fileItem := item{name: e.Name(), path: path, isDir: false, isTop: false}
 				fileItems = append(fileItems, fileItem)
 			}
 		}

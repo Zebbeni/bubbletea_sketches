@@ -3,7 +3,7 @@ package browser
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -27,7 +27,7 @@ func New() Model {
 	}
 
 	browserList := list.New(getItems(dir), NewDelegate(), 30, 30)
-	browserList.Title = fmt.Sprintf("/%s", path.Base(dir))
+	browserList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
 	browserList.SetShowHelp(false)
 	browserList.SetShowStatusBar(false)
 
@@ -70,8 +70,9 @@ func (m Model) selectCurrentItem(selectDirectories bool) Model {
 	if i.isDir {
 		if selectDirectories {
 			m.Dir = i.path
-			m.list.Title = i.name
+			m.list.Title = fmt.Sprintf("%s/...", i.name)
 			m.list.SetItems(getItems(m.Dir))
+			m.list.Select(0)
 		}
 	} else {
 		m.File = i.path
