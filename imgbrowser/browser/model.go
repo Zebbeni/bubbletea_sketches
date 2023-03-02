@@ -16,7 +16,7 @@ type Model struct {
 	Dir  string
 	File string
 
-	list list.Model
+	lists []list.Model
 }
 
 func New() Model {
@@ -26,15 +26,7 @@ func New() Model {
 		os.Exit(1)
 	}
 
-	browserList := list.New(getItems(dir), NewDelegate(), 30, 30)
-	browserList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
-	browserList.SetShowHelp(false)
-	browserList.SetShowStatusBar(false)
-
-	browserList.KeyMap.ForceQuit.Unbind()
-	browserList.KeyMap.Quit.Unbind()
-
-	m := Model{Dir: dir, list: browserList}
+	m := Model{}.addListForDirectory(dir)
 	return m
 }
 
@@ -43,36 +35,37 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Esc):
-			return m, io.BackCmd
+			return m.handleEsc()
 		case key.Matches(msg, io.KeyMap.Enter):
-			m = m.selectCurrentItem(true)
-			return m, nil
+			return m.handleEnter()
 		default:
-			m.list, cmd = m.list.Update(msg)
-			m = m.selectCurrentItem(false)
-			return m, cmd
+			return m.handleKey(msg)
 		}
 	}
 	return m, nil
 }
 
+func (m Model) currentList() list.Model {
+	return m.lists[m.listIndex()]
+}
+
+func (m Model) listIndex() int {
+	return len(m.lists) - 1
+}
+
 func (m Model) selectCurrentItem(selectDirectories bool) Model {
-	i, ok := m.list.SelectedItem().(item)
+	i, ok := m.currentList().SelectedItem().(item)
 	if !ok {
 		panic("Unexpected list item type")
 	}
 
 	if i.isDir {
 		if selectDirectories {
-			m.Dir = i.path
-			m.list.Title = fmt.Sprintf("%s/...", i.name)
-			m.list.SetItems(getItems(m.Dir))
-			m.list.Select(0)
+			m = m.addListForDirectory(i.path)
 		}
 	} else {
 		m.File = i.path
@@ -81,6 +74,21 @@ func (m Model) selectCurrentItem(selectDirectories bool) Model {
 	return m
 }
 
+func (m Model) addListForDirectory(dir string) Model {
+	newList := list.New(getItems(dir), NewDelegate(), 30, 30)
+	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
+	newList.SetShowHelp(false)
+	newList.SetShowStatusBar(false)
+
+	newList.KeyMap.ForceQuit.Unbind()
+	newList.KeyMap.Quit.Unbind()
+
+	m.Dir = dir
+	m.lists = append(m.lists, newList)
+
+	return m
+}
+
 func (m Model) View() string {
-	return m.list.View()
+	return m.currentList().View()
 }

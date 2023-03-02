@@ -20,6 +20,6 @@ func RenderImageFile(imgFilePath string) string {
 		return "Could not decode image " + imgFilePath
 	}
 
-	imgString := process(img, 60)
+	imgString := process(img, 50)
 	return imgString
 }
