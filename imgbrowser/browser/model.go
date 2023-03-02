@@ -57,21 +57,23 @@ func (m Model) listIndex() int {
 	return len(m.lists) - 1
 }
 
-func (m Model) selectCurrentItem(selectDirectories bool) Model {
+func (m Model) selectCurrentItem(selectDirectories bool) (Model, bool) {
 	i, ok := m.currentList().SelectedItem().(item)
 	if !ok {
 		panic("Unexpected list item type")
 	}
 
+	isFileSelected := false
 	if i.isDir {
 		if selectDirectories {
 			m = m.addListForDirectory(i.path)
 		}
 	} else {
 		m.File = i.path
+		isFileSelected = true
 	}
 
-	return m
+	return m, isFileSelected
 }
 
 func (m Model) addListForDirectory(dir string) Model {

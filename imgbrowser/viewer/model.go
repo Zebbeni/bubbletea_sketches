@@ -1,11 +1,14 @@
 package viewer
 
 import (
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/process"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/process"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
 type FileMsg string
+type SettingsMsg settings.Model
 type RenderMsg struct {
 	Path     string
 	Rendered string

@@ -5,18 +5,20 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app/menu"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
 type Model struct {
-	menu    menu.Model
-	browser browser.Model
-	viewer  viewer.Model
-	w, h    int
+	menu     menu.Model
+	browser  browser.Model
+	settings settings.Model
+	viewer   viewer.Model
+	w, h     int
 }
 
 func New() Model {
@@ -62,6 +64,8 @@ func (m Model) View() string {
 		leftContent = m.menu.View()
 	case menu.FileMenu:
 		leftContent = m.browser.View()
+	case menu.SettingsMenu:
+		leftContent = m.settings.View()
 	}
 	vpLeft.SetContent(lipgloss.NewStyle().
 		Width(m.leftPanelWidth()).
