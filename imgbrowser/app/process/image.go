@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-// RenderImageFile will eventually be part of a
 func RenderImageFile(imgFilePath string) string {
 	var img image.Image
 	imgFile, err := os.Open(imgFilePath)

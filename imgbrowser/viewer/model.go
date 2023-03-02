@@ -3,21 +3,20 @@ package viewer
 import (
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/process"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
-type FileMsg string
 type SettingsMsg settings.Model
 type RenderMsg struct {
-	Path     string
-	Rendered string
+	FilePath  string
+	ImgString string
 }
 
 type Model struct {
-	filePath          string
-	renderString      string
-	isWaitingOnRender bool
+	imgString string
+	settings  settings.Model
+
+	WaitingOnRender bool
 }
 
 func New() Model {
@@ -30,43 +29,21 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case FileMsg:
-		return m.handleFileMsg(msg)
 	case RenderMsg:
 		return m.handleRenderMsg(msg)
 	}
 	return m, nil
 }
 
-func (m Model) handleFileMsg(msg FileMsg) (Model, tea.Cmd) {
-	if m.filePath == string(msg) {
-		return m, nil
-	}
-	// kick off a render process
-	m.filePath = string(msg)
-	m.isWaitingOnRender = true
-
-	return m, m.msgWhenRendered
-}
-
 func (m Model) handleRenderMsg(msg RenderMsg) (Model, tea.Cmd) {
-	if msg.Path != m.filePath {
-		return m, nil
-	}
-	m.isWaitingOnRender = false
-	m.renderString = msg.Rendered
+	m.WaitingOnRender = false
+	m.imgString = msg.ImgString
 	return m, nil
 }
 
 func (m Model) View() string {
-	if m.isWaitingOnRender {
+	if m.WaitingOnRender {
 		return ""
 	}
-	return m.renderString
-}
-
-func (m Model) msgWhenRendered() tea.Msg {
-	rendered := process.RenderImageFile(m.filePath)
-	// kick off a render job
-	return RenderMsg{Path: m.filePath, Rendered: rendered}
+	return m.imgString
 }

@@ -18,16 +18,18 @@ type Model struct {
 	browser  browser.Model
 	settings settings.Model
 	viewer   viewer.Model
-	w, h     int
+
+	w, h int
 }
 
 func New() Model {
 	return Model{
-		menu:    menu.New(),
-		browser: browser.New(),
-		viewer:  viewer.New(),
-		w:       100,
-		h:       100,
+		menu:     menu.New(),
+		browser:  browser.New(),
+		settings: settings.New(),
+		viewer:   viewer.New(),
+		w:        100,
+		h:        100,
 	}
 }
 

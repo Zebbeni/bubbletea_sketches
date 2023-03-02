@@ -3,7 +3,6 @@ package browser
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -17,6 +16,8 @@ type Model struct {
 	File string
 
 	lists []list.Model
+
+	DidUpdate bool
 }
 
 func New() Model {
@@ -55,40 +56,6 @@ func (m Model) currentList() list.Model {
 
 func (m Model) listIndex() int {
 	return len(m.lists) - 1
-}
-
-func (m Model) selectCurrentItem(selectDirectories bool) (Model, bool) {
-	i, ok := m.currentList().SelectedItem().(item)
-	if !ok {
-		panic("Unexpected list item type")
-	}
-
-	isFileSelected := false
-	if i.isDir {
-		if selectDirectories {
-			m = m.addListForDirectory(i.path)
-		}
-	} else {
-		m.File = i.path
-		isFileSelected = true
-	}
-
-	return m, isFileSelected
-}
-
-func (m Model) addListForDirectory(dir string) Model {
-	newList := list.New(getItems(dir), NewDelegate(), 30, 30)
-	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
-	newList.SetShowHelp(false)
-	newList.SetShowStatusBar(false)
-
-	newList.KeyMap.ForceQuit.Unbind()
-	newList.KeyMap.Quit.Unbind()
-
-	m.Dir = dir
-	m.lists = append(m.lists, newList)
-
-	return m
 }
 
 func (m Model) View() string {

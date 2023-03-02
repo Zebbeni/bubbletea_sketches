@@ -8,17 +8,16 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
-var interpolationNames = map[resize.InterpolationFunction]string{
-	resize.NearestNeighbor:   "Nearest Neighbor",
-	resize.Bilinear:          "Bilinear",
-	resize.Bicubic:           "Bicubic",
-	resize.MitchellNetravali: "MitchellNetravali",
-	resize.Lanczos2:          "Lanczos2",
-	resize.Lanczos3:          "Lanczos3",
+type Model struct {
+	Interpolation resize.InterpolationFunction
+
+	DidUpdate bool
 }
 
-type Model struct {
-	interpolation resize.InterpolationFunction
+func New() Model {
+	return Model{
+		Interpolation: resize.Lanczos3,
+	}
 }
 
 func (m Model) Init() tea.Cmd {
