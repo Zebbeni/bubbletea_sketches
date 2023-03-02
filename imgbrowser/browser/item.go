@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/lipgloss"
 )
 
 var imgExtensions = []string{".jpg", ".png"}
@@ -24,8 +23,7 @@ func (i item) FilterValue() string {
 
 func (i item) Title() string {
 	if i.isTop {
-		t := fmt.Sprintf("← to %s/", i.name)
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("103")).Render(t)
+		return fmt.Sprintf("← to %s/", i.name)
 	}
 	if i.isDir {
 		return fmt.Sprintf("%s/", i.name)
