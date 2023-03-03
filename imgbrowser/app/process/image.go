@@ -4,9 +4,15 @@ import (
 	"bufio"
 	"image"
 	"os"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
-func RenderImageFile(imgFilePath string) string {
+func RenderImageFile(s settings.Model, imgFilePath string) string {
+	if imgFilePath == "" {
+		return "Choose an image to render"
+	}
+
 	var img image.Image
 	imgFile, err := os.Open(imgFilePath)
 	if err != nil {
@@ -19,6 +25,6 @@ func RenderImageFile(imgFilePath string) string {
 		return "Could not decode image " + imgFilePath
 	}
 
-	imgString := process(img, 50)
+	imgString := process(s, img, 50)
 	return imgString
 }

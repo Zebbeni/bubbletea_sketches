@@ -59,6 +59,6 @@ func (m Model) handleFinishRenderMsg(msg io.FinishRenderMsg) (Model, tea.Cmd) {
 }
 
 func (m Model) processRenderCmd() tea.Msg {
-	imgString := process.RenderImageFile(m.browser.ActiveFile)
+	imgString := process.RenderImageFile(m.settings, m.browser.ActiveFile)
 	return io.FinishRenderMsg{FilePath: m.browser.ActiveFile, ImgString: imgString}
 }

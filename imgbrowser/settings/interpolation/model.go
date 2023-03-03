@@ -29,8 +29,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			return m.handleEsc()
 		case key.Matches(msg, io.KeyMap.Enter):
 			return m.handleEnter()
-		default:
-			return m.handleKey(msg)
+		case key.Matches(msg, io.KeyMap.Nav):
+			return m.handleNav(msg)
 		}
 	}
 	return m, nil

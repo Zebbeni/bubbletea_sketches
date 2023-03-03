@@ -11,6 +11,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nfnt/resize"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
 const PROPORTION = 0.46
@@ -30,12 +32,12 @@ var blockFuncs = map[rune]blockFunc{
 	'▗': calcBotRight,
 }
 
-func process(input image.Image, width int) string {
+func process(s settings.Model, input image.Image, width int) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
 	height := int(float32(width) * (imgH / imgW) * PROPORTION)
 	// resize the sample to be twice the width and height we want to render
 	// since we'll try to use each block character to mimic 4 pixels
-	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, resize.Lanczos3)
+	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, s.Interpolation.Function)
 
 	colorPalette = make(color.Palette, 0)
 
