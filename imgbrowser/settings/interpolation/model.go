@@ -21,7 +21,7 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -41,9 +41,8 @@ func (m Model) View() string {
 }
 
 func New() Model {
-	items := getItems()
+	items := menuItems()
 	selected := items[0].(item)
-	l := list.New(items, NewDelegate(), 30, 30)
-
-	return Model{Function: selected.Function, list: l}
+	menu := newMenu(items)
+	return Model{Function: selected.Function, list: menu}
 }

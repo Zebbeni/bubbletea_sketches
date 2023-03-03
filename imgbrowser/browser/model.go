@@ -12,12 +12,12 @@ import (
 )
 
 type Model struct {
-	Dir  string
-	File string
+	SelectedDir  string
+	SelectedFile string
+	ActiveFile   string
 
 	lists []list.Model
 
-	DidUpdate   bool
 	ShouldClose bool
 }
 
@@ -41,11 +41,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Esc):
-			return m.handleEsc(), nil
+			return m.handleEsc()
+		case key.Matches(msg, io.KeyMap.Nav):
+			return m.handleNav(msg)
 		case key.Matches(msg, io.KeyMap.Enter):
-			return m.handleEnter(), nil
-		default:
-			return m.handleKey(msg)
+			return m.handleEnter()
 		}
 	}
 	return m, nil

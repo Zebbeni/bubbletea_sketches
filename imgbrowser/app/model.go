@@ -8,6 +8,7 @@ import (
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
@@ -54,14 +55,23 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		return m.handleSizeMsg(msg)
 	case checkSizeMsg:
 		return m.handleCheckSizeMsg()
-	case tea.KeyMsg:
-		return m.handleKeyMsg(msg)
-	case viewer.RenderMsg:
-		return m.handleRenderMsg(msg)
+	case tea.WindowSizeMsg:
+		return m.handleSizeMsg(msg)
+	case io.StartRenderMsg:
+		return m.handleStartRenderMsg()
+	case io.FinishRenderMsg:
+		return m.handleFinishRenderMsg(msg)
+	default:
+		switch m.state {
+		case Main:
+			return m.handleMainUpdate(msg)
+		case Browser:
+			return m.handleBrowserUpdate(msg)
+		case Settings:
+			return m.handleSettingsUpdate(msg)
+		}
 	}
 	return m, nil
 }

@@ -6,6 +6,7 @@ import (
 
 type Map struct {
 	Enter key.Binding
+	Nav   key.Binding
 	Esc   key.Binding
 }
 
@@ -16,6 +17,10 @@ func InitKeyMap() {
 		Enter: key.NewBinding(
 			key.WithKeys("return", "enter"),
 			key.WithHelp("↲", "select"),
+		),
+		Nav: key.NewBinding(
+			key.WithKeys("up", "down"),
+			key.WithHelp("↕", "nav"),
 		),
 		Esc: key.NewBinding(
 			key.WithKeys("esc"),

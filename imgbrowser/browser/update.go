@@ -6,60 +6,60 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
-func (m Model) handleEsc() Model {
+func (m Model) handleEnter() (Model, tea.Cmd) {
+	return m.updateSelected()
+}
+
+func (m Model) handleNav(msg tea.KeyMsg) (Model, tea.Cmd) {
+	cmds := make([]tea.Cmd, 2)
+	m.lists[m.listIndex()], cmds[0] = m.currentList().Update(msg)
+	m, cmds[1] = m.updateActive()
+	return m, tea.Batch(cmds...)
+}
+
+func (m Model) handleEsc() (Model, tea.Cmd) {
 	// remove last list if possible (go back to previous)
 	if len(m.lists) > 1 {
 		m.lists = m.lists[:m.listIndex()]
-		return m
+		return m, nil
 	}
 
 	m.ShouldClose = true
-	return m
+	return m, nil
 }
 
-func (m Model) handleEnter() Model {
-	var isFile bool
-	m, isFile = m.selectCurrentItem(true)
-	if isFile {
-		m.ShouldClose = true
-	}
-	return m
-}
-
-func (m Model) handleKey(msg tea.KeyMsg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
-	m.lists[m.listIndex()], cmd = m.currentList().Update(msg)
-	m, _ = m.selectCurrentItem(false)
-	return m, cmd
-}
-
-// TODO: Stop overloading the term 'Select' here.
-// The way we're using this function, selectCurrentItem either means that the
-// user selected the item with [Enter] or merely arrowed over it. It's a fuzzy
-// area since we're using the current highlighted image to preview the settings
-// even if it hasn't been explicitly 'selected'
-func (m Model) selectCurrentItem(selectDirectories bool) (Model, bool) {
+func (m Model) updateActive() (Model, tea.Cmd) {
 	itm, ok := m.currentList().SelectedItem().(item)
 	if !ok {
 		panic("Unexpected list item type")
 	}
-	isFile := itm.isDir == false
 
-	if isFile {
-		if m.File != itm.path {
-			m.DidUpdate = true
-		}
-		m.File = itm.path
-		return m, true
+	if itm.isDir == false && m.ActiveFile != itm.path {
+		m.ActiveFile = itm.path
+		return m, io.StartRenderCmd
+	}
+	return m, nil
+}
+
+func (m Model) updateSelected() (Model, tea.Cmd) {
+	itm, ok := m.currentList().SelectedItem().(item)
+	if !ok {
+		panic("Unexpected list item type")
 	}
 
-	if itm.isDir && selectDirectories {
+	if itm.isDir {
+		m.SelectedDir = itm.path
 		m = m.addListForDirectory(itm.path)
+	} else {
+		m.SelectedFile = itm.path
+		m.ShouldClose = true
 	}
 
-	return m, false
+	return m, nil
 }
 
 func (m Model) addListForDirectory(dir string) Model {
@@ -71,7 +71,7 @@ func (m Model) addListForDirectory(dir string) Model {
 	newList.KeyMap.ForceQuit.Unbind()
 	newList.KeyMap.Quit.Unbind()
 
-	m.Dir = dir
+	m.SelectedDir = dir
 	m.lists = append(m.lists, newList)
 
 	return m

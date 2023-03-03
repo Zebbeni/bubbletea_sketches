@@ -1,28 +1,26 @@
 package settings
 
 import (
-	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/interpolation"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/menu"
 )
 
 type Model struct {
+	state State
+	menu  list.Model
+
 	Interpolation interpolation.Model
-	state         menu.State
 
-	list menu.Model
-
-	DidUpdate   bool
 	ShouldClose bool
 }
 
 func New() Model {
 	return Model{
-		state: menu.Main,
-		list:  menu.New(),
+		state:         Main,
+		menu:          newMenu(),
+		Interpolation: interpolation.New(),
 	}
 }
 
@@ -31,20 +29,26 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, io.KeyMap.Esc):
-			return m.handleEsc(), nil
-			//case key.Matches(msg, io.KeyMap.Enter):
-			//	return m.handleEnter()
-			//default:
-			//	return m.handleKey(msg)
-		}
+	var cmd tea.Cmd
+	switch m.state {
+	case Main:
+		m, cmd = m.handleMainUpdate(msg)
+	case Interpolation:
+		m, cmd = m.handleInterpolationUpdate(msg)
 	}
-	return m, nil
+	m = m.handleCloseFlags()
+	return m, cmd
 }
 
 func (m Model) View() string {
-	return "View Settings"
+	switch m.state {
+	case Main:
+		return m.menu.View()
+	case Interpolation:
+		return m.Interpolation.View()
+		//case Palette:
+		//case Dithering:
+		//case Characters:
+	}
+	return m.menu.View()
 }

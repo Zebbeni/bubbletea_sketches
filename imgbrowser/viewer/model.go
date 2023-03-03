@@ -3,14 +3,9 @@ package viewer
 import (
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
-
-type SettingsMsg settings.Model
-type RenderMsg struct {
-	FilePath  string
-	ImgString string
-}
 
 type Model struct {
 	imgString string
@@ -29,13 +24,13 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case RenderMsg:
-		return m.handleRenderMsg(msg)
+	case io.FinishRenderMsg:
+		return m.handleFinishRenderMsg(msg)
 	}
 	return m, nil
 }
 
-func (m Model) handleRenderMsg(msg RenderMsg) (Model, tea.Cmd) {
+func (m Model) handleFinishRenderMsg(msg io.FinishRenderMsg) (Model, tea.Cmd) {
 	m.WaitingOnRender = false
 	m.imgString = msg.ImgString
 	return m, nil

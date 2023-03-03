@@ -22,14 +22,23 @@ func (i item) Description() string {
 	return ""
 }
 
-func getItems() []list.Item {
+func menuItems() []list.Item {
 	items := make([]list.Item, len(nameMap))
-
 	for i, f := range Functions {
 		items[i] = item{name: nameMap[f], Function: f}
 	}
-
 	return items
+}
+
+func newMenu(items []list.Item) list.Model {
+	l := list.New(items, NewDelegate(), 30, 30)
+	l.SetShowHelp(false)
+	l.SetShowFilter(false)
+	l.SetShowTitle(false)
+
+	l.KeyMap.ForceQuit.Unbind()
+	l.KeyMap.Quit.Unbind()
+	return l
 }
 
 func NewDelegate() list.DefaultDelegate {
