@@ -6,27 +6,26 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
-func (m Model) handleEsc() (Model, tea.Cmd) {
-	// remove last list on escape if possible (navigate back to previous list)
+func (m Model) handleEsc() Model {
+	// remove last list if possible (go back to previous)
 	if len(m.lists) > 1 {
 		m.lists = m.lists[:m.listIndex()]
-		return m, nil
+		return m
 	}
-	// send command to close the browser experience
-	return m, io.CloseCmd
+
+	m.ShouldClose = true
+	return m
 }
 
-func (m Model) handleEnter() (Model, tea.Cmd) {
+func (m Model) handleEnter() Model {
 	var isFile bool
 	m, isFile = m.selectCurrentItem(true)
 	if isFile {
-		return m, io.CloseCmd
+		m.ShouldClose = true
 	}
-	return m, nil
+	return m
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (Model, tea.Cmd) {

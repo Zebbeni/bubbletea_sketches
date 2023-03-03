@@ -17,6 +17,13 @@ type item struct {
 	isTop bool
 }
 
+func NewDelegate() list.DefaultDelegate {
+	delegate := list.NewDefaultDelegate()
+	delegate.SetSpacing(0)
+	delegate.ShowDescription = false
+	return delegate
+}
+
 func (i item) FilterValue() string {
 	return i.name
 }

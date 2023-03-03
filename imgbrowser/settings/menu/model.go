@@ -8,14 +8,6 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
-type State int
-
-const (
-	MainMenu State = iota
-	FileMenu
-	SettingsMenu
-)
-
 type Model struct {
 	State State
 	list  list.Model
@@ -31,7 +23,7 @@ func New() Model {
 	menuList.KeyMap.Quit.Unbind()
 
 	return Model{
-		State: MainMenu,
+		State: Main,
 		list:  menuList,
 	}
 }

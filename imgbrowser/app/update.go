@@ -1,41 +1,52 @@
 package app
 
 import (
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app/menu"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app/process"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
 func (m Model) handleKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
 	cmds := make([]tea.Cmd, 2)
-	switch m.menu.State {
-	case menu.MainMenu:
-		m.menu, cmds[0] = m.menu.Update(msg)
-	case menu.FileMenu:
+	switch m.state {
+	case Main:
+		switch {
+		case key.Matches(msg, io.KeyMap.Enter):
+			selectedItem := m.menu.SelectedItem().(item)
+			m.state = selectedItem.state
+		default:
+			m.menu, cmds[0] = m.menu.Update(msg)
+		}
+	case Browser:
 		m.browser, cmds[0] = m.browser.Update(msg)
 		if m.browser.DidUpdate {
 			m.browser.DidUpdate = false
 			m.viewer.WaitingOnRender = true
 			cmds[1] = m.newRenderCmd
 		}
-	case menu.SettingsMenu:
-		// it'd be nice to have settings update a flag if 'dirty'
+		if m.browser.ShouldClose {
+			m.state = Main
+		}
+	case Settings:
 		m.settings, cmds[0] = m.settings.Update(msg)
 		if m.settings.DidUpdate {
 			m.settings.DidUpdate = false
 			m.viewer.WaitingOnRender = true
 			cmds[1] = m.newRenderCmd
 		}
-		m.viewer, cmds[1] = m.viewer.Update(viewer.SettingsMsg(m.settings))
+		if m.settings.ShouldClose {
+			m.state = Main
+		}
 	}
 
 	return m, tea.Batch(cmds...)
 }
 
 func (m Model) handleBackMsg() (Model, tea.Cmd) {
-	m.menu = m.menu.SetState(menu.MainMenu)
+	m.state = Main
 	return m, nil
 }
 

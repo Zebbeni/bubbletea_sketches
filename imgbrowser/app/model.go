@@ -1,20 +1,29 @@
 package app
 
 import (
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app/menu"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
+type State int
+
+const (
+	Main State = iota
+	Browser
+	Settings
+)
+
 type Model struct {
-	menu     menu.Model
+	state State
+
+	menu     list.Model
 	browser  browser.Model
 	settings settings.Model
 	viewer   viewer.Model
@@ -24,7 +33,8 @@ type Model struct {
 
 func New() Model {
 	return Model{
-		menu:     menu.New(),
+		state:    Main,
+		menu:     newMenu(),
 		browser:  browser.New(),
 		settings: settings.New(),
 		viewer:   viewer.New(),
@@ -48,8 +58,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.handleSizeMsg(msg)
 	case checkSizeMsg:
 		return m.handleCheckSizeMsg()
-	case io.BackMsg:
-		return m.handleBackMsg()
 	case tea.KeyMsg:
 		return m.handleKeyMsg(msg)
 	case viewer.RenderMsg:
@@ -61,12 +69,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	vpLeft := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
 	var leftContent string
-	switch m.menu.State {
-	case menu.MainMenu:
+	switch m.state {
+	case Main:
 		leftContent = m.menu.View()
-	case menu.FileMenu:
+	case Browser:
 		leftContent = m.browser.View()
-	case menu.SettingsMenu:
+	case Settings:
 		leftContent = m.settings.View()
 	}
 	vpLeft.SetContent(lipgloss.NewStyle().

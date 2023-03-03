@@ -17,7 +17,8 @@ type Model struct {
 
 	lists []list.Model
 
-	DidUpdate bool
+	DidUpdate   bool
+	ShouldClose bool
 }
 
 func New() Model {
@@ -40,9 +41,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Esc):
-			return m.handleEsc()
+			return m.handleEsc(), nil
 		case key.Matches(msg, io.KeyMap.Enter):
-			return m.handleEnter()
+			return m.handleEnter(), nil
 		default:
 			return m.handleKey(msg)
 		}

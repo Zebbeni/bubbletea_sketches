@@ -1,8 +1,17 @@
-package settings
+package interpolation
 
 import "github.com/nfnt/resize"
 
-var interpolationNames = map[resize.InterpolationFunction]string{
+var Functions = []resize.InterpolationFunction{
+	resize.NearestNeighbor,
+	resize.Bilinear,
+	resize.Bicubic,
+	resize.MitchellNetravali,
+	resize.Lanczos2,
+	resize.Lanczos3,
+}
+
+var nameMap = map[resize.InterpolationFunction]string{
 	resize.NearestNeighbor:   "Nearest Neighbor",
 	resize.Bilinear:          "Bilinear",
 	resize.Bicubic:           "Bicubic",

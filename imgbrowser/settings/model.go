@@ -3,20 +3,26 @@ package settings
 import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/nfnt/resize"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/interpolation"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/menu"
 )
 
 type Model struct {
-	Interpolation resize.InterpolationFunction
+	Interpolation interpolation.Model
+	state         menu.State
 
-	DidUpdate bool
+	list menu.Model
+
+	DidUpdate   bool
+	ShouldClose bool
 }
 
 func New() Model {
 	return Model{
-		Interpolation: resize.Lanczos3,
+		state: menu.Main,
+		list:  menu.New(),
 	}
 }
 
@@ -29,7 +35,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Esc):
-			return m.handleEsc()
+			return m.handleEsc(), nil
 			//case key.Matches(msg, io.KeyMap.Enter):
 			//	return m.handleEnter()
 			//default:
