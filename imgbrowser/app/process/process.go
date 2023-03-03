@@ -11,8 +11,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/nfnt/resize"
-
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
 const PROPORTION = 0.46
@@ -20,27 +18,17 @@ const PROPORTION = 0.46
 // var color color.Palette
 var colorPalette color.Palette
 
-type blockFunc func(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64)
-
-var blockFuncs = map[rune]blockFunc{
-	'▀': calcTop,
-	'▐': calcRight,
-	'▞': calcDiagonal,
-	'▖': calcBotLeft,
-	'▘': calcTopLeft,
-	'▝': calcTopRight,
-	'▗': calcBotRight,
-}
-
-func process(s settings.Model, input image.Image, width int) string {
+func (m Renderer) process(input image.Image, width int) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
 	height := int(float32(width) * (imgH / imgW) * PROPORTION)
+
 	// resize the sample to be twice the width and height we want to render
 	// since we'll try to use each block character to mimic 4 pixels
-	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, s.Sampling.Function)
+	// TODO: Revisit this assumption when we can change allowed characters
+	resizeFunc := m.Settings.Sampling.Function
+	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, resizeFunc)
 
 	colorPalette = make(color.Palette, 0)
-
 	// cucumber richard
 	hexColors := []string{
 		"#efeaa1", "#b6c157", "#749938", "#1d6e1c",
@@ -70,7 +58,7 @@ func process(s settings.Model, input image.Image, width int) string {
 
 			// pick the block, fg and bg color with the lowest total difference
 			// convert the colors to ansi, render the block and add it at row[x]
-			r, fg, bg := getBlock(r1, r2, r3, r4)
+			r, fg, bg := m.getBlock(r1, r2, r3, r4)
 
 			pFg, _ := colorful.MakeColor(fg)
 			pBg, _ := colorful.MakeColor(bg)
@@ -88,9 +76,9 @@ func process(s settings.Model, input image.Image, width int) string {
 
 // find the best block character and foreground and background colors to match
 // a set of 4 pixels. return
-func getBlock(r1, r2, r3, r4 colorful.Color) (r rune, fg, bg colorful.Color) {
+func (m Renderer) getBlock(r1, r2, r3, r4 colorful.Color) (r rune, fg, bg colorful.Color) {
 	minDist := 100.0
-	for bRune, bFunc := range blockFuncs {
+	for bRune, bFunc := range m.blockFuncs {
 		f, b, dist := bFunc(r1, r2, r3, r4)
 		if dist < minDist {
 			minDist = dist
@@ -100,7 +88,7 @@ func getBlock(r1, r2, r3, r4 colorful.Color) (r rune, fg, bg colorful.Color) {
 	return
 }
 
-func avgCol(colors ...colorful.Color) (colorful.Color, float64) {
+func (m Renderer) avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 	rSum, gSum, bSum := 0.0, 0.0, 0.0
 	for _, col := range colors {
 		rSum += col.R
@@ -110,8 +98,10 @@ func avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 	count := float64(len(colors))
 	avg := colorful.Color{R: rSum / count, G: gSum / count, B: bSum / count}
 
-	paletteAvg := colorPalette.Convert(avg)
-	avg, _ = colorful.MakeColor(paletteAvg)
+	if m.Settings.Colors.IsPaletted {
+		paletteAvg := colorPalette.Convert(avg)
+		avg, _ = colorful.MakeColor(paletteAvg)
+	}
 
 	// compute sum of squares
 	totalDist := 0.0
@@ -121,44 +111,44 @@ func avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 	return avg, totalDist
 }
 
-func calcTop(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r1, r2)
-	bg, bDist := avgCol(r3, r4)
+func (m Renderer) calcTop(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r1, r2)
+	bg, bDist := m.avgCol(r3, r4)
 	return fg, bg, fDist + bDist
 }
 
-func calcRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r2, r4)
-	bg, bDist := avgCol(r1, r3)
+func (m Renderer) calcRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r2, r4)
+	bg, bDist := m.avgCol(r1, r3)
 	return fg, bg, fDist + bDist
 }
 
-func calcDiagonal(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r2, r3)
-	bg, bDist := avgCol(r1, r4)
+func (m Renderer) calcDiagonal(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r2, r3)
+	bg, bDist := m.avgCol(r1, r4)
 	return fg, bg, fDist + bDist
 }
 
-func calcBotLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r3)
-	bg, bDist := avgCol(r1, r2, r4)
+func (m Renderer) calcBotLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r3)
+	bg, bDist := m.avgCol(r1, r2, r4)
 	return fg, bg, fDist + bDist
 }
 
-func calcTopLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r1)
-	bg, bDist := avgCol(r2, r3, r4)
+func (m Renderer) calcTopLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r1)
+	bg, bDist := m.avgCol(r2, r3, r4)
 	return fg, bg, fDist + bDist
 }
 
-func calcTopRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r2)
-	bg, bDist := avgCol(r1, r3, r4)
+func (m Renderer) calcTopRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r2)
+	bg, bDist := m.avgCol(r1, r3, r4)
 	return fg, bg, fDist + bDist
 }
 
-func calcBotRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := avgCol(r4)
-	bg, bDist := avgCol(r1, r2, r3)
+func (m Renderer) calcBotRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
+	fg, fDist := m.avgCol(r4)
+	bg, bDist := m.avgCol(r1, r2, r3)
 	return fg, bg, fDist + bDist
 }

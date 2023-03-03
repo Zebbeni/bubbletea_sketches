@@ -25,6 +25,7 @@ func RenderImageFile(s settings.Model, imgFilePath string) string {
 		return "Could not decode image " + imgFilePath
 	}
 
-	imgString := process(s, img, 50)
+	renderer := New(s)
+	imgString := renderer.process(img, 50)
 	return imgString
 }
