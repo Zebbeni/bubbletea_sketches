@@ -1,4 +1,4 @@
-package interpolation
+package sampling
 
 import (
 	"github.com/charmbracelet/bubbles/key"

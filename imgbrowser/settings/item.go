@@ -21,8 +21,8 @@ func (i item) Description() string {
 
 func newMenu() list.Model {
 	items := []list.Item{
-		item{name: "Interpolation", state: Interpolation},
-		//item{name: "Dithering", state: Dithering},
+		item{name: "Colors", state: Colors},
+		item{name: "Sampling", state: Interpolation},
 		//item{name: "Palette", state: Palette},
 		//item{name: "Characters", state: Characters},
 	}

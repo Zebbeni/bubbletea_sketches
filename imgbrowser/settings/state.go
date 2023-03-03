@@ -4,16 +4,14 @@ type State int
 
 const (
 	Main State = iota
+	Colors
 	Interpolation
-	Dithering
-	Palette
 	Characters
 )
 
 var States = []State{
 	Main,
+	Colors,
 	Interpolation,
-	Dithering,
-	Palette,
 	Characters,
 }

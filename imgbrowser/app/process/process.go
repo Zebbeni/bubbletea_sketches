@@ -17,7 +17,7 @@ import (
 
 const PROPORTION = 0.46
 
-// var palette color.Palette
+// var color color.Palette
 var colorPalette color.Palette
 
 type blockFunc func(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64)
@@ -37,7 +37,7 @@ func process(s settings.Model, input image.Image, width int) string {
 	height := int(float32(width) * (imgH / imgW) * PROPORTION)
 	// resize the sample to be twice the width and height we want to render
 	// since we'll try to use each block character to mimic 4 pixels
-	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, s.Interpolation.Function)
+	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, s.Sampling.Function)
 
 	colorPalette = make(color.Palette, 0)
 

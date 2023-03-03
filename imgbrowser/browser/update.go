@@ -66,6 +66,7 @@ func (m Model) addListForDirectory(dir string) Model {
 	newList := list.New(getItems(dir), NewDelegate(), 30, 30)
 	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
 	newList.SetShowHelp(false)
+	newList.SetShowTitle(false)
 	newList.SetShowStatusBar(false)
 
 	newList.KeyMap.ForceQuit.Unbind()

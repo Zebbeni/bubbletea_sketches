@@ -15,13 +15,24 @@ func (m Model) handleMainUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m Model) handleColorsUpdate(msg tea.Msg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.Colors, cmd = m.Colors.Update(msg)
+
+	if m.Colors.ShouldClose {
+		m.state = Main
+		m.Colors.ShouldClose = false
+	}
+	return m, cmd
+}
+
 func (m Model) handleInterpolationUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
-	m.Interpolation, cmd = m.Interpolation.Update(msg)
+	m.Sampling, cmd = m.Sampling.Update(msg)
 
-	if m.Interpolation.ShouldClose {
+	if m.Sampling.ShouldClose {
 		m.state = Main
-		m.Interpolation.ShouldClose = false
+		m.Sampling.ShouldClose = false
 	}
 	return m, cmd
 }
@@ -51,7 +62,7 @@ func (m Model) handleEsc(msg tea.Msg) (Model, tea.Cmd) {
 	case Main:
 		m.ShouldClose = true
 	case Interpolation:
-		m.Interpolation, cmd = m.Interpolation.Update(msg)
+		m.Sampling, cmd = m.Sampling.Update(msg)
 	}
 	return m, cmd
 }
@@ -63,8 +74,8 @@ func (m Model) handleKey(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) handleCloseFlags() Model {
-	if m.Interpolation.ShouldClose {
-		m.Interpolation.ShouldClose = false
+	if m.Sampling.ShouldClose {
+		m.Sampling.ShouldClose = false
 		m.state = Main
 	}
 	return m

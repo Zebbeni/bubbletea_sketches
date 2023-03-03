@@ -1,4 +1,4 @@
-package interpolation
+package sampling
 
 import (
 	tea "github.com/charmbracelet/bubbletea"

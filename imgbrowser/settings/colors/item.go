@@ -1,13 +1,12 @@
-package interpolation
+package colors
 
 import (
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/nfnt/resize"
 )
 
 type item struct {
-	name     string
-	Function resize.InterpolationFunction
+	name  string
+	value bool
 }
 
 func (i item) FilterValue() string {
@@ -23,22 +22,22 @@ func (i item) Description() string {
 }
 
 func menuItems() []list.Item {
-	items := make([]list.Item, len(nameMap))
-	for i, f := range Functions {
-		items[i] = item{name: nameMap[f], Function: f}
+	return []list.Item{
+		item{name: "TrueColor", value: false},
+		item{name: "Paletted", value: true},
 	}
-	return items
 }
 
 func newMenu(items []list.Item) list.Model {
-	l := list.New(items, NewDelegate(), 30, 30)
-	l.SetShowHelp(false)
-	l.SetShowFilter(false)
-	l.SetShowTitle(false)
+	newList := list.New(items, NewDelegate(), 30, 30)
+	newList.SetShowHelp(false)
+	newList.SetShowFilter(false)
+	newList.SetShowTitle(false)
+	newList.SetShowStatusBar(false)
 
-	l.KeyMap.ForceQuit.Unbind()
-	l.KeyMap.Quit.Unbind()
-	return l
+	newList.KeyMap.ForceQuit.Unbind()
+	newList.KeyMap.Quit.Unbind()
+	return newList
 }
 
 func NewDelegate() list.DefaultDelegate {
