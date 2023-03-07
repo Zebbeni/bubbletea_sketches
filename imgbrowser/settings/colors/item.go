@@ -72,9 +72,9 @@ func buildMenuItems(m Model) []list.Item {
 }
 
 func getLimitedToggle(m Model) list.Item {
-	name := "True Color"
+	name := "Limited (Off)"
 	if m.IsLimited {
-		name = "Limited"
+		name = "Limited (On)"
 	}
 	return item{name: name, onSelect: func(m Model) (Model, tea.Cmd) {
 		m.IsLimited = !m.IsLimited

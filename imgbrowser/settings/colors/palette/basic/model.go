@@ -22,8 +22,14 @@ type Model struct {
 
 func New() Model {
 	items := menuItems()
+	newMenu := menu.New(items)
+
+	delegate := menu.NewDelegate()
+	delegate.ShowDescription = true
+	newMenu.SetDelegate(delegate)
+
 	return Model{
-		menu:        menu.New(items),
+		menu:        newMenu,
 		name:        items[0].(item).name,
 		palette:     items[0].(item).palette,
 		ShouldClose: false,

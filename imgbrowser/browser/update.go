@@ -1,9 +1,6 @@
 package browser
 
 import (
-	"fmt"
-	"path/filepath"
-
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
@@ -67,9 +64,8 @@ func (m Model) addListForDirectory(dir string) Model {
 
 	newList.SetShowTitle(false)
 	newList.SetShowStatusBar(false)
-	newList.SetFilteringEnabled(true)
-
-	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
+	newList.SetFilteringEnabled(false)
+	newList.SetShowFilter(false)
 
 	m.lists = append(m.lists, newList)
 	m.SelectedDir = dir
