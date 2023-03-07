@@ -33,8 +33,9 @@ func menuItems() []list.Item {
 func newMenu(items []list.Item) list.Model {
 	l := list.New(items, NewDelegate(), 30, 30)
 	l.SetShowHelp(false)
-	l.SetShowFilter(false)
+	l.SetFilteringEnabled(false)
 	l.SetShowTitle(false)
+	l.SetShowStatusBar(false)
 
 	l.KeyMap.ForceQuit.Unbind()
 	l.KeyMap.Quit.Unbind()

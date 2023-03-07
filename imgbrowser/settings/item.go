@@ -1,6 +1,10 @@
 package settings
 
-import "github.com/charmbracelet/bubbles/list"
+import (
+	"github.com/charmbracelet/bubbles/list"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+)
 
 type item struct {
 	name  string
@@ -22,23 +26,9 @@ func (i item) Description() string {
 func newMenu() list.Model {
 	items := []list.Item{
 		item{name: "Colors", state: Colors},
-		item{name: "Sampling", state: Interpolation},
-		//item{name: "Palette", state: Palette},
+		item{name: "Sampling", state: Sampling},
+		//item{name: "Limited", state: Limited},
 		//item{name: "Characters", state: Characters},
 	}
-	menu := list.New(items, NewDelegate(), 20, 20)
-	menu.SetShowHelp(false)
-	menu.SetShowFilter(false)
-	menu.SetShowTitle(false)
-
-	menu.KeyMap.ForceQuit.Unbind()
-	menu.KeyMap.Quit.Unbind()
-	return menu
-}
-
-func NewDelegate() list.DefaultDelegate {
-	delegate := list.NewDefaultDelegate()
-	delegate.SetSpacing(0)
-	delegate.ShowDescription = false
-	return delegate
+	return menu.New(items)
 }

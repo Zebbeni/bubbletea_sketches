@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
 )
 
 func (m Model) handleEnter() (Model, tea.Cmd) {
@@ -63,17 +63,16 @@ func (m Model) updateSelected() (Model, tea.Cmd) {
 }
 
 func (m Model) addListForDirectory(dir string) Model {
-	newList := list.New(getItems(dir), NewDelegate(), 30, 30)
-	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
-	newList.SetShowHelp(false)
+	newList := menu.New(getItems(dir))
+
 	newList.SetShowTitle(false)
 	newList.SetShowStatusBar(false)
+	newList.SetFilteringEnabled(true)
 
-	newList.KeyMap.ForceQuit.Unbind()
-	newList.KeyMap.Quit.Unbind()
+	newList.Title = fmt.Sprintf(".../%s/", filepath.Base(dir))
 
-	m.SelectedDir = dir
 	m.lists = append(m.lists, newList)
+	m.SelectedDir = dir
 
 	return m
 }

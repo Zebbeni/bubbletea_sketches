@@ -20,7 +20,7 @@ type Model struct {
 
 func New() Model {
 	return Model{
-		state:    Main,
+		state:    Menu,
 		menu:     newMenu(),
 		Colors:   colors.New(),
 		Sampling: sampling.New(),
@@ -32,28 +32,26 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
 	switch m.state {
-	case Main:
-		m, cmd = m.handleMainUpdate(msg)
+	case Menu:
+		return m.handleMenuUpdate(msg)
 	case Colors:
-		m, cmd = m.handleColorsUpdate(msg)
-	case Interpolation:
-		m, cmd = m.handleInterpolationUpdate(msg)
+		return m.handleColorsUpdate(msg)
+	case Sampling:
+		return m.handleSamplingUpdate(msg)
 	}
-	m = m.handleCloseFlags()
-	return m, cmd
+	return m, nil
 }
 
 func (m Model) View() string {
 	switch m.state {
-	case Main:
+	case Menu:
 		return m.menu.View()
 	case Colors:
 		return m.Colors.View()
-	case Interpolation:
+	case Sampling:
 		return m.Sampling.View()
-		//case Palette:
+		//case Limited:
 		//case Colors:
 		//case Characters:
 	}

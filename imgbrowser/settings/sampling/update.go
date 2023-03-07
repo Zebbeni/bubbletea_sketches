@@ -13,16 +13,19 @@ func (m Model) handleEsc() (Model, tea.Cmd) {
 
 func (m Model) handleEnter() (Model, tea.Cmd) {
 	m.ShouldClose = true
-	return m, nil
+
+	selectedItem := m.list.SelectedItem().(item)
+	if selectedItem.Function == m.Function {
+		return m, nil
+	}
+
+	m.Function = selectedItem.Function
+	return m, io.StartRenderCmd
+
 }
 
 func (m Model) handleNav(msg tea.KeyMsg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
-	selectedItem := m.list.SelectedItem().(item)
-	if selectedItem.Function == m.Function {
-		return m, nil
-	}
-	m.Function = selectedItem.Function
-	return m, tea.Batch(cmd, io.StartRenderCmd)
+	return m, cmd
 }

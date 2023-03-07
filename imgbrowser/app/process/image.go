@@ -26,6 +26,6 @@ func RenderImageFile(s settings.Model, imgFilePath string) string {
 	}
 
 	renderer := New(s)
-	imgString := renderer.process(img, 50)
+	imgString := renderer.process(img, 35)
 	return imgString
 }

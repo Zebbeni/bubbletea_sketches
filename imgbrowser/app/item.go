@@ -28,6 +28,7 @@ func newMenu() list.Model {
 	menu.SetShowHelp(false)
 	menu.SetShowFilter(false)
 	menu.SetShowTitle(false)
+	menu.SetShowStatusBar(false)
 
 	menu.KeyMap.ForceQuit.Unbind()
 	menu.KeyMap.Quit.Unbind()

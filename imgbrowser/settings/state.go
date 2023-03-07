@@ -3,15 +3,15 @@ package settings
 type State int
 
 const (
-	Main State = iota
+	Menu State = iota
 	Colors
-	Interpolation
+	Sampling
 	Characters
 )
 
 var States = []State{
-	Main,
+	Menu,
 	Colors,
-	Interpolation,
+	Sampling,
 	Characters,
 }
