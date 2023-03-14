@@ -1,20 +1,21 @@
 package main
 
 import (
-	"github.com/charmbracelet/lipgloss"
-	"github.com/lucasb-eyer/go-colorful"
-	"github.com/nfnt/resize"
 	"image"
 	"image/color"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
 	"math"
+
+	"github.com/charmbracelet/lipgloss"
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/nfnt/resize"
 )
 
 const PROPORTION = 0.46
 
-// var palette color.Palette
+// var limited color.Palette
 var colorPalette color.Palette
 
 type blockFunc func(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64)
@@ -72,20 +73,20 @@ func process(input image.Image, width int) string {
 		colorPalette = append(colorPalette, c)
 	}
 
-	//colorPalette = palette.Plan9
-	//colorPalette = palette.WebSafe
+	//colorPalette = limited.Plan9
+	//colorPalette = limited.WebSafe
 
-	//colorPalette = palette.AnsiWinPowershell16()
-	//colorPalette = palette.Ansi256()
-	//colorPalette = palette.AnsiVga16()
+	//colorPalette = limited.AnsiWinPowershell16()
+	//colorPalette = limited.Ansi256()
+	//colorPalette = limited.AnsiVga16()
 
-	//addGamutPalette := func(p gamut.Palette) {
+	//addGamutPalette := func(p gamut.Limited) {
 	//	for _, c := range p.Colors() {
 	//		colorPalette = append(colorPalette, c.Color)
 	//	}
 	//}
 	//
-	//gamutPalette := palette.Crayola
+	//gamutPalette := limited.Crayola
 	//addGamutPalette(gamutPalette)
 
 	// TRIADIC

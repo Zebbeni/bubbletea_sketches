@@ -22,16 +22,16 @@ func New(s settings.Model) Renderer {
 type blockFunc func(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64)
 
 func (m Renderer) createBlockFuncs() map[rune]blockFunc {
-	//return map[rune]blockFunc{
-	//	'▀': m.calcTop,
-	//	'▐': m.calcRight,
-	//	'▞': m.calcDiagonal,
-	//	'▖': m.calcBotLeft,
-	//	'▘': m.calcTopLeft,
-	//	'▝': m.calcTopRight,
-	//	'▗': m.calcBotRight,
-	//}
 	return map[rune]blockFunc{
 		'▀': m.calcTop,
+		'▐': m.calcRight,
+		'▞': m.calcDiagonal,
+		'▖': m.calcBotLeft,
+		'▘': m.calcTopLeft,
+		'▝': m.calcTopRight,
+		'▗': m.calcBotRight,
 	}
+	//return map[rune]blockFunc{
+	//	'▀': m.calcTop,
+	//}
 }

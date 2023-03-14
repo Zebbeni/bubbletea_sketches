@@ -23,14 +23,14 @@ func (i item) Title() string {
 }
 
 func (i item) Description() string {
-	blocks := make([]string, len(i.palette)/2+1)
+	blocks := make([]string, len(i.palette)/2+1+len(i.palette)/30)
 	for idx := 0; idx < len(i.palette); idx += 2 {
 		var fg, bg colorful.Color
 		var lipFg, lipBg lipgloss.Color
 
 		fg, _ = colorful.MakeColor(i.palette[idx])
 		lipFg = lipgloss.Color(fg.Hex())
-		style := lipgloss.NewStyle().Foreground(lipFg)
+		style := lipgloss.NewStyle().Foreground(lipFg).MaxWidth(30)
 
 		if idx+1 < len(i.palette) {
 			bg, _ = colorful.MakeColor(i.palette[idx+1])

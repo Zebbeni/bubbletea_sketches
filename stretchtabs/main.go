@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/charmbracelet/bubbles/viewport"
 	"os"
 	"time"
+
+	"github.com/charmbracelet/bubbles/viewport"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"golang.org/x/term"

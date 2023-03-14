@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/makeworld-the-better-one/dither/v2"
+	"github.com/mccutchen/palettor"
 	"github.com/nfnt/resize"
 )
 
@@ -29,8 +30,12 @@ func (m Renderer) process(input image.Image, width int) string {
 	resizeFunc := m.Settings.Sampling.Function
 	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, resizeFunc)
 
-	_, colorPalette = m.Settings.Colors.Palette.GetCurrent()
+	k := 16
+	maxIterations := 1000
+	palette, _ := palettor.Extract(k, maxIterations, refImg)
+	colorPalette = palette.Colors()
 
+	//_, colorPalette = m.Settings.Colors.Palette.GetCurrent()
 	if m.Settings.Colors.IsDithered {
 		ditherer := dither.NewDitherer(colorPalette)
 		ditherer.Matrix = m.Settings.Colors.Matrix.Method

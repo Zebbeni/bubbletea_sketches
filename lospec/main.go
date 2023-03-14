@@ -2,25 +2,23 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/Zebbeni/bubbletea_sketches/lospec/app"
+	"github.com/Zebbeni/bubbletea_sketches/lospec/io"
 )
 
-var url = "https://lospec.com/palette-list/load?colorNumberFilterType=any&colorNumber=8&tag=hardware&sortingType=default"
+func init() {
+	io.InitKeyMap()
+}
 
 func main() {
-	response, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
+	m := app.New()
+	p := tea.NewProgram(m)
+	if _, err := p.Run(); err != nil {
+		fmt.Println("run error:", err)
+		os.Exit(1)
 	}
-	defer response.Body.Close()
-
-	responseData, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	responseString := string(responseData)
-	fmt.Println("Response:\n", responseString)
 }
