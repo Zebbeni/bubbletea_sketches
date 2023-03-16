@@ -2,17 +2,19 @@ package box
 
 import (
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/Zebbeni/bubbletea_sketches/navPattern/component"
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/focus"
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/io"
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/shared"
 )
 
 var (
-	unfocusedStyle = lipgloss.NewStyle().Padding(1)
-	focusedStyle   = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder())
+	unfocusedStyle = lipgloss.NewStyle()
+	focusedStyle   = lipgloss.NewStyle()
 )
 
 type Model struct {
@@ -24,11 +26,6 @@ type Model struct {
 }
 
 func New() *Model {
-	// create left
-	// create right
-	// create map
-	// create Container
-
 	return &Model{
 		"A",
 		20, 10,
@@ -41,7 +38,7 @@ func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (component.Resizable, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -53,9 +50,18 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *Model) View() string {
-	//return m.name
-	if m.HasFocus() {
-		return focusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
-	}
-	return unfocusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
+	vp := viewport.New(m.w, m.h)
+
+	content := lipgloss.NewStyle().Width(m.w).Height(m.h).Render(m.name)
+	vp.SetContent(content)
+	return vp.View()
+	//if m.HasFocus() {
+	//	return focusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
+	//}
+	//return unfocusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
+}
+
+func (m *Model) Resize(w, h int) component.Resizable {
+	m.w, m.h = w, h
+	return m
 }
