@@ -2,21 +2,17 @@ package app
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/component"
+	"github.com/Zebbeni/bubbletea_sketches/navPattern/box"
 )
 
 type Model struct {
-	// Hmm does it really make sense to have all children be navigable?
-	childMap map[component.Focus]component.Focusable
-
-	*component.FocusHandler
+	box *box.Model
 }
 
-func New() Model {
-	return Model{
-		childMap: component.New(),
+func New() *Model {
+	return &Model{
+		box: box.New(),
 	}
 }
 
@@ -25,13 +21,10 @@ func (m *Model) Init() tea.Cmd {
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		return m.handleKeyMsg(msg)
-	}
+	m.box.Update(msg)
 	return m, nil
 }
 
 func (m *Model) View() string {
-	style := lipgloss.NewStyle()
+	return m.box.View()
 }

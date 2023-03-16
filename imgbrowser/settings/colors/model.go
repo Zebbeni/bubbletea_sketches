@@ -13,7 +13,7 @@ type State int
 
 // Colors consists of a few different components that are shown or hidden
 // depending on which toggles have been set on / off. The Model state indicates
-// which component is currently focused. From top to bottom the components are:
+// which shared is currently focused. From top to bottom the components are:
 
 // 1) Limited (on/off)
 // 2) Palette (Name) (if Limited) -> [Enter] displays Palette menu
