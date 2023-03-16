@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	unfocusedStyle = lipgloss.NewStyle()
-	focusedStyle   = lipgloss.NewStyle()
+	unfocusedStyle = lipgloss.NewStyle().Padding(1)
+	focusedStyle   = lipgloss.NewStyle().BorderStyle(lipgloss.NormalBorder())
 )
 
 type Model struct {
@@ -25,12 +25,12 @@ type Model struct {
 	focus.Handler
 }
 
-func New() *Model {
+func New(hasFocus bool) *Model {
 	return &Model{
 		"A",
 		20, 10,
 		nil,
-		focus.NewNode(true),
+		focus.NewNode(hasFocus),
 	}
 }
 
@@ -52,13 +52,17 @@ func (m *Model) Update(msg tea.Msg) (component.Resizable, tea.Cmd) {
 func (m *Model) View() string {
 	vp := viewport.New(m.w, m.h)
 
-	content := lipgloss.NewStyle().Width(m.w).Height(m.h).Render(m.name)
-	vp.SetContent(content)
+	textStyle := unfocusedStyle
+	if m.HasFocus() {
+		textStyle = focusedStyle
+	}
+	w := m.w - textStyle.GetHorizontalFrameSize()
+	h := m.h - textStyle.GetVerticalFrameSize()
+	textStyle = textStyle.Copy().Width(w).Height(h)
+	textContent := textStyle.Render(m.name)
+
+	vp.SetContent(textContent)
 	return vp.View()
-	//if m.HasFocus() {
-	//	return focusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
-	//}
-	//return unfocusedStyle.Copy().Width(m.w).Height(m.h).Render(m.name)
 }
 
 func (m *Model) Resize(w, h int) component.Resizable {

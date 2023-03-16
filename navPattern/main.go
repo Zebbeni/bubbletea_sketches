@@ -7,7 +7,12 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/app"
+	"github.com/Zebbeni/bubbletea_sketches/navPattern/io"
 )
+
+func init() {
+	io.InitKeyMap()
+}
 
 func main() {
 	m := app.New()

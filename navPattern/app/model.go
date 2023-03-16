@@ -12,7 +12,7 @@ type Model struct {
 }
 
 func New() Model {
-	s := stretch.New(box.New())
+	s := stretch.New(box.New(true))
 	return Model{
 		content: s,
 	}

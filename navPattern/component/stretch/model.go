@@ -3,7 +3,6 @@ package stretch
 import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/component"
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/env"
@@ -47,6 +46,5 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	vp := viewport.New(m.w, m.h)
 	vp.SetContent(m.content.View())
-	vp.Style = lipgloss.NewStyle().Width(m.w).Height(m.h).BorderStyle(lipgloss.RoundedBorder())
 	return vp.View()
 }
