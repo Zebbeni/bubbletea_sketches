@@ -6,10 +6,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/component"
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/focus"
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/io"
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/shared"
+	"github.com/Zebbeni/bubbletea_sketches/navPattern/nav"
 )
 
 var (
@@ -19,26 +17,26 @@ var (
 
 type Model struct {
 	name     string
-	w, h     int
-	children map[shared.ID]*Model
+	children map[nav.ID]Model
 
-	focus.Handler
+	w, h int
+
+	nav.FocusHandler
 }
 
-func New(hasFocus bool) *Model {
-	return &Model{
-		"A",
-		20, 10,
-		nil,
-		focus.NewNode(hasFocus),
+func New(hasFocus bool) Model {
+	return Model{
+		name:         "Box",
+		children:     nil,
+		FocusHandler: nav.NewNode(hasFocus),
 	}
 }
 
-func (m *Model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m *Model) Update(msg tea.Msg) (component.Resizable, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -49,7 +47,7 @@ func (m *Model) Update(msg tea.Msg) (component.Resizable, tea.Cmd) {
 	return m, nil
 }
 
-func (m *Model) View() string {
+func (m Model) View() string {
 	vp := viewport.New(m.w, m.h)
 
 	textStyle := unfocusedStyle
@@ -65,7 +63,7 @@ func (m *Model) View() string {
 	return vp.View()
 }
 
-func (m *Model) Resize(w, h int) component.Resizable {
+func (m Model) SetSize(w, h int) Model {
 	m.w, m.h = w, h
 	return m
 }

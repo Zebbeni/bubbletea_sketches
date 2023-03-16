@@ -1,4 +1,4 @@
-package stretch
+package app
 
 import (
 	"os"
@@ -22,7 +22,7 @@ const (
 func (m Model) handleSizeMsg(msg tea.WindowSizeMsg) (Model, tea.Cmd) {
 	w, h := msg.Width, msg.Height
 	m.w, m.h = w, h
-	m.content = m.content.Resize(m.w, m.h)
+	m.content = m.content.SetSize(m.w, m.h)
 
 	tea.ClearScreen()
 	return m, nil

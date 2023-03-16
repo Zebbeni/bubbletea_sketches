@@ -1,8 +1,8 @@
-package focus
+package nav
 
 import tea "github.com/charmbracelet/bubbletea"
 
-// Node is a simple Handler implementation for an object
+// Node is a simple FocusHandler implementation for an object
 // with no focusable children.
 type Node struct {
 	hasFocus bool
@@ -23,7 +23,7 @@ func (n *Node) HasFocus() bool {
 }
 
 // HandleNav is only called on currently-focused objects, allowing them to
-// transfer focus to another internal shared. Since Node has no internal
+// transfer focus to another internal id. Since Node has no internal
 // components, we set it to false.
 func (n *Node) HandleNav(msg tea.KeyMsg) {
 	n.hasFocus = false

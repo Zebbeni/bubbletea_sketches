@@ -1,22 +1,20 @@
-package focus
+package nav
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/shared"
 )
 
-// Container is a Handler implementation for an object with focusable children.
+// Container is a FocusHandler implementation for an object with focusable children.
 type Container struct {
 	hasFocus bool
 
 	doFocusInternal bool
-	internalFocusID shared.ID
-	children        map[shared.ID]Component
-	navMap          NavMap
+	internalFocusID ID
+	children        map[ID]FocusHandler
+	navMap          Map
 }
 
-func NewContainer(hasFocus, doInternal bool, id shared.ID, navMap NavMap) Container {
+func NewContainer(hasFocus, doInternal bool, id ID, navMap Map) Container {
 	return Container{
 		hasFocus:        hasFocus,
 		doFocusInternal: doInternal,
@@ -33,15 +31,15 @@ func (f *Container) HasFocus() bool {
 	return f.hasFocus
 }
 
-// HandleNav takes a KeyMsg already determined to be a navigation message and
-// recursively redirects this navigation to its internal Handler objects.
-// When it we reach a Handler object
+// HandleNav takes a KeyMsg already determined to be a nav message and
+// recursively redirects this nav to its internal FocusHandler objects.
+// When it we reach a FocusHandler object
 func (f *Container) HandleNav(msg tea.KeyMsg) {
 	if f.doFocusInternal {
-		// update focused shared. this may cause the child to set
+		// update focused id. this may cause the child to set
 		// hasFocus = false, indicating that the focus needs to be
-		// moved to a shared higher up the chain.
-		f.children[f.internalFocusID].Update(msg)
+		// moved to a id higher up the chain.
+		f.children[f.internalFocusID].HandleNav(msg)
 		if f.children[f.internalFocusID].HasFocus() {
 			return
 		}

@@ -1,11 +1,10 @@
-package focus
+package nav
 
 import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/navPattern/io"
-	"github.com/Zebbeni/bubbletea_sketches/navPattern/shared"
 )
 
 type Direction int
@@ -18,10 +17,12 @@ const (
 	None
 )
 
-type NavMap map[Direction]map[shared.ID]shared.ID
+type ID int
 
-func NewNavMap(right, left, down, up map[shared.ID]shared.ID) NavMap {
-	return NavMap{
+type Map map[Direction]map[ID]ID
+
+func NewMap(right, left, down, up map[ID]ID) Map {
+	return Map{
 		Right: right,
 		Left:  left,
 		Down:  down,
@@ -29,11 +30,11 @@ func NewNavMap(right, left, down, up map[shared.ID]shared.ID) NavMap {
 	}
 }
 
-func (n NavMap) get(id shared.ID, dir Direction) (shared.ID, bool) {
+func (n Map) get(id ID, dir Direction) (ID, bool) {
 	next, hasNext := id, false
 	if dirMap, ok := n[dir]; ok {
-		// locate and focus the get child shared given the direction
-		// of the navigation
+		// locate and focus the get child id given the direction
+		// of the nav
 		next, hasNext = dirMap[id]
 	}
 	return next, hasNext
