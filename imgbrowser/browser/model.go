@@ -19,6 +19,8 @@ type Model struct {
 	lists []list.Model
 
 	ShouldClose bool
+
+	isFocused bool
 }
 
 func New() Model {
@@ -61,4 +63,13 @@ func (m Model) listIndex() int {
 
 func (m Model) View() string {
 	return m.currentList().View()
+}
+
+func (m Model) Focus() Model {
+	m.isFocused = true
+	return m
+}
+
+func (m Model) IsFocused() bool {
+	return m.isFocused
 }

@@ -16,6 +16,8 @@ type Model struct {
 	Sampling sampling.Model
 
 	ShouldClose bool
+
+	isFocused bool
 }
 
 func New() Model {
@@ -56,4 +58,13 @@ func (m Model) View() string {
 		//case Characters:
 	}
 	return m.menu.View()
+}
+
+func (m Model) Focus() Model {
+	m.isFocused = true
+	return m
+}
+
+func (m Model) IsFocused() bool {
+	return m.isFocused
 }
