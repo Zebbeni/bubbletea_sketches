@@ -23,11 +23,7 @@ type Model struct {
 	state State
 
 	controls controls.Model
-
-	//menu     list.Model
-	//browser  browser.Model
-	//settings settings.Model
-	viewer viewer.Model
+	viewer   viewer.Model
 
 	w, h int
 }
@@ -36,12 +32,9 @@ func New() Model {
 	return Model{
 		state:    Main,
 		controls: controls.New(),
-		//menu:     newMenu(),
-		//browser:  browser.New(),
-		//settings: settings.New(),
-		viewer: viewer.New(),
-		w:      100,
-		h:      100,
+		viewer:   viewer.New(),
+		w:        100,
+		h:        100,
 	}
 }
 
@@ -71,26 +64,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	vpLeft := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
+	lViewport := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
 
 	leftContent := m.controls.View()
-	vpLeft.SetContent(lipgloss.NewStyle().
-		Width(m.leftPanelWidth()).
-		Height(m.leftPanelHeight()).
-		Render(leftContent))
-	panelLeft := vpLeft.View()
+	lViewport.SetContent(lipgloss.NewStyle().Width(m.leftPanelWidth()).Height(m.leftPanelHeight()).Render(leftContent))
+	leftPanel := lViewport.View()
 
 	viewer := m.viewer.View()
-	vpRight := viewport.New(m.rightPanelWidth(), m.rightPanelHeight())
-	vpRight.SetContent(lipgloss.NewStyle().
-		Width(m.rightPanelWidth()).
-		Height(m.rightPanelHeight()).
-		Align(lipgloss.Center).
-		AlignVertical(lipgloss.Center).
-		Render(viewer))
-	panelRight := vpRight.View()
+	rViewport := viewport.New(m.rPanelWidth(), m.rPanelHeight())
 
-	content := lipgloss.JoinHorizontal(lipgloss.Top, panelLeft, panelRight)
+	vpRightStyle := lipgloss.NewStyle().Align(lipgloss.Center).AlignVertical(lipgloss.Center)
+	rightContent := vpRightStyle.Copy().Width(m.rPanelWidth()).Height(m.rPanelHeight()).Render(viewer)
+	rViewport.SetContent(rightContent)
+	rightPanel := rViewport.View()
+
+	content := lipgloss.JoinHorizontal(lipgloss.Top, leftPanel, rightPanel)
 
 	vp := viewport.New(m.w, m.h)
 	vp.SetContent(content)

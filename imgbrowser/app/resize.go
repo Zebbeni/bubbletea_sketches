@@ -51,10 +51,10 @@ func (m Model) leftPanelHeight() int {
 	return m.h
 }
 
-func (m Model) rightPanelWidth() int {
+func (m Model) rPanelWidth() int {
 	return m.w - m.leftPanelWidth()
 }
 
-func (m Model) rightPanelHeight() int {
+func (m Model) rPanelHeight() int {
 	return m.h
 }
