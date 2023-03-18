@@ -6,7 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
@@ -15,8 +15,7 @@ func init() {
 }
 
 func main() {
-	//m := app.New()
-	m := controls.New()
+	m := app.New()
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)

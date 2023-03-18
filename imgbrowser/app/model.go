@@ -1,15 +1,13 @@
 package app
 
 import (
-	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/env"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/viewer"
 )
 
@@ -24,10 +22,12 @@ const (
 type Model struct {
 	state State
 
-	menu     list.Model
-	browser  browser.Model
-	settings settings.Model
-	viewer   viewer.Model
+	controls controls.Model
+
+	//menu     list.Model
+	//browser  browser.Model
+	//settings settings.Model
+	viewer viewer.Model
 
 	w, h int
 }
@@ -35,12 +35,13 @@ type Model struct {
 func New() Model {
 	return Model{
 		state:    Main,
-		menu:     newMenu(),
-		browser:  browser.New(),
-		settings: settings.New(),
-		viewer:   viewer.New(),
-		w:        100,
-		h:        100,
+		controls: controls.New(),
+		//menu:     newMenu(),
+		//browser:  browser.New(),
+		//settings: settings.New(),
+		viewer: viewer.New(),
+		w:      100,
+		h:      100,
 	}
 }
 
@@ -64,29 +65,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case io.FinishRenderMsg:
 		return m.handleFinishRenderMsg(msg)
 	default:
-		switch m.state {
-		case Main:
-			return m.handleMainUpdate(msg)
-		case Browser:
-			return m.handleBrowserUpdate(msg)
-		case Settings:
-			return m.handleSettingsUpdate(msg)
-		}
+		return m.handleControlsUpdate(msg)
 	}
 	return m, nil
 }
 
 func (m Model) View() string {
 	vpLeft := viewport.New(m.leftPanelWidth(), m.leftPanelHeight())
-	var leftContent string
-	switch m.state {
-	case Main:
-		leftContent = m.menu.View()
-	case Browser:
-		leftContent = m.browser.View()
-	case Settings:
-		leftContent = m.settings.View()
-	}
+
+	leftContent := m.controls.View()
 	vpLeft.SetContent(lipgloss.NewStyle().
 		Width(m.leftPanelWidth()).
 		Height(m.leftPanelHeight()).

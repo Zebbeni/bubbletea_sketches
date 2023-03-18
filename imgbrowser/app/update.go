@@ -1,46 +1,11 @@
 package app
 
 import (
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/app/process"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
-
-func (m Model) handleMainUpdate(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, io.KeyMap.Enter):
-			selectedItem := m.menu.SelectedItem().(item)
-			m.state = selectedItem.state
-		}
-	}
-	m.menu, cmd = m.menu.Update(msg)
-	return m, cmd
-}
-
-func (m Model) handleBrowserUpdate(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
-	m.browser, cmd = m.browser.Update(msg)
-	if m.browser.ShouldClose {
-		m.browser.ShouldClose = false
-		m.state = Main
-	}
-	return m, cmd
-}
-
-func (m Model) handleSettingsUpdate(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
-	m.settings, cmd = m.settings.Update(msg)
-	if m.settings.ShouldClose {
-		m.settings.ShouldClose = false
-		m.state = Main
-	}
-	return m, cmd
-}
 
 func (m Model) handleStartRenderMsg() (Model, tea.Cmd) {
 	m.viewer.WaitingOnRender = true
@@ -49,7 +14,7 @@ func (m Model) handleStartRenderMsg() (Model, tea.Cmd) {
 
 func (m Model) handleFinishRenderMsg(msg io.FinishRenderMsg) (Model, tea.Cmd) {
 	// cut out early if the finished render is for an previously selected image
-	if msg.FilePath != m.browser.ActiveFile {
+	if msg.FilePath != m.controls.FileBrowser.ActiveFile {
 		return m, nil
 	}
 
@@ -59,6 +24,12 @@ func (m Model) handleFinishRenderMsg(msg io.FinishRenderMsg) (Model, tea.Cmd) {
 }
 
 func (m Model) processRenderCmd() tea.Msg {
-	imgString := process.RenderImageFile(m.settings, m.browser.ActiveFile)
-	return io.FinishRenderMsg{FilePath: m.browser.ActiveFile, ImgString: imgString}
+	imgString := process.RenderImageFile(m.controls.Settings, m.controls.FileBrowser.ActiveFile)
+	return io.FinishRenderMsg{FilePath: m.controls.FileBrowser.ActiveFile, ImgString: imgString}
+}
+
+func (m Model) handleControlsUpdate(msg tea.Msg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.controls, cmd = m.controls.Update(msg)
+	return m, cmd
 }
