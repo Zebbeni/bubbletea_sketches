@@ -94,6 +94,7 @@ func (m Model) View() string {
 
 	vp := viewport.New(m.w, m.h)
 	vp.SetContent(content)
-	vp.Style = lipgloss.NewStyle().Width(m.w).Height(m.h).BorderStyle(lipgloss.RoundedBorder())
+	//vp.Style = lipgloss.NewStyle().Width(m.w).Height(m.h).BorderStyle(lipgloss.RoundedBorder())
+	vp.Style = lipgloss.NewStyle().Width(m.w).Height(m.h)
 	return vp.View()
 }

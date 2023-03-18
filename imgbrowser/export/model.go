@@ -8,12 +8,12 @@ import (
 )
 
 type Model struct {
-	isFocused bool
+	ShouldClose bool
 }
 
 func New() Model {
 	return Model{
-		isFocused: false,
+		ShouldClose: false,
 	}
 }
 
@@ -26,7 +26,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, io.KeyMap.Nav):
-
+			m.ShouldClose = true
 		}
 	}
 	return m, nil
@@ -34,13 +34,4 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return "Export Menu"
-}
-
-func (m Model) Focus() Model {
-	m.isFocused = true
-	return m
-}
-
-func (m Model) IsFocused() bool {
-	return m.isFocused
 }

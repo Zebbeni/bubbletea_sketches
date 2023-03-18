@@ -25,7 +25,8 @@ func (m Model) handleOpenUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.FileBrowser, cmd = m.FileBrowser.Update(msg)
 
-	if m.FileBrowser.IsFocused() == false {
+	if m.FileBrowser.ShouldClose {
+		m.FileBrowser.ShouldClose = false
 		return m.handleControlsUpdate(msg)
 	}
 	return m, cmd
@@ -36,7 +37,8 @@ func (m Model) handleSettingsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	m.Settings, cmd = m.Settings.Update(msg)
 
 	// if Settings no longer focused, handle the message at the control level
-	if m.Settings.IsFocused() == false {
+	if m.Settings.ShouldClose {
+		m.Settings.ShouldClose = false
 		return m.handleControlsUpdate(msg)
 	}
 
@@ -47,7 +49,8 @@ func (m Model) handleExportUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.Export, cmd = m.Export.Update(msg)
 
-	if m.Export.IsFocused() == false {
+	if m.Export.ShouldClose {
+		m.Export.ShouldClose = false
 		return m.handleControlsUpdate(msg)
 	}
 
@@ -76,11 +79,11 @@ func (m Model) handleControlsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 			m.active = m.focus
 			switch m.active {
 			case Open:
-				m.FileBrowser = m.FileBrowser.Focus()
+				m.FileBrowser = m.FileBrowser
 			case Settings:
-				m.Settings = m.Settings.Focus()
+				m.Settings = m.Settings
 			case Export:
-				m.Export = m.Export.Focus()
+				m.Export = m.Export
 			}
 			// Okay this is the problem. Right here we want to call
 			// 'Focus()' on the currently focused model. But I really
