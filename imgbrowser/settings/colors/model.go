@@ -1,17 +1,17 @@
 package colors
 
 import (
-	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/makeworld-the-better-one/dither/v2"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/colors/adaptive"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/colors/palette"
 )
 
 type State int
 
-// Colors consists of a few different components that are shown or hidden
+// None consists of a few different components that are shown or hidden
 // depending on which toggles have been set on / off. The Model state indicates
 // which component is currently focused. From top to bottom the components are:
 
@@ -24,43 +24,31 @@ type State int
 // These can all be part of a single list, but we need to onSelect the list items
 
 const (
-	Menu State = iota
-	Palette
+	None State = iota
+	TrueColor
+	Adaptive
+	Paletted
 )
 
 type Model struct {
-	state State
+	active State // the panel taking input
+	focus  State // the focused button
+	mode   State // the mode currently in use for rendering
 
-	menu list.Model
-
-	IsLimited    bool
-	IsDithered   bool
-	IsSerpentine bool
-
+	Adaptive adaptive.Model
 	Palette  palette.Model
-	Ditherer dither.Ditherer
-	Matrix   Matrix
 
-	showPaletteMenu bool
-	showMatrixMenu  bool
-
-	ShouldClose   bool
-	ShouldUnfocus bool
+	ShouldClose bool
 }
 
 func New() Model {
 	m := Model{
-		state:           Menu,
-		IsLimited:       true,
-		IsDithered:      true,
-		IsSerpentine:    true,
-		Palette:         palette.New(),
-		Matrix:          Matrix{Name: "FloydSteinberg", Method: dither.FloydSteinberg},
-		showPaletteMenu: false,
-		showMatrixMenu:  false,
-		ShouldClose:     false,
+		active:      None,
+		focus:       TrueColor,
+		Adaptive:    adaptive.New(),
+		Palette:     palette.New(),
+		ShouldClose: false,
 	}
-	m.menu = menu.New(buildMenuItems(m))
 	return m
 }
 
@@ -69,32 +57,40 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	var cmd tea.Cmd
-	switch m.state {
-	case Menu:
-		m, cmd = m.handleMenuUpdate(msg)
-	case Palette:
-		m, cmd = m.handlePaletteUpdate(msg)
+	switch m.active {
+	case Adaptive:
+		return m.handleAdaptiveUpdate(msg)
+	case Paletted:
+		return m.handlePaletteUpdate(msg)
 	}
-	m.menu.SetItems(buildMenuItems(m))
-	return m, cmd
+	return m.handleMenuUpdate(msg)
 }
 
 func (m Model) View() string {
-	switch m.state {
-	case Menu:
-		return m.menu.View()
-	case Palette:
-		return m.Palette.View()
+	buttons := m.drawButtons()
+	var controls string
+	switch m.active {
+	case Adaptive:
+		controls = m.Adaptive.View()
+	case Paletted:
+		controls = m.Palette.View()
 	}
-	return ""
+
+	return lipgloss.JoinVertical(lipgloss.Top, buttons, controls)
 }
 
-func (m Model) paletteName() string {
-	name, _ := m.Palette.GetCurrent()
-	return name
+func (m Model) IsLimited() bool {
+	return true
 }
 
-func (m Model) matrixName() string {
-	return m.Matrix.Name
+func (m Model) IsDithered() bool {
+	return true
+}
+
+func (m Model) IsSerpentine() bool {
+	return true
+}
+
+func (m Model) Matrix() dither.ErrorDiffusionMatrix {
+	return dither.FloydSteinberg
 }

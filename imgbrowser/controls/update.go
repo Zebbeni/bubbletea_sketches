@@ -27,7 +27,7 @@ func (m Model) handleOpenUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.FileBrowser.ShouldClose {
 		m.FileBrowser.ShouldClose = false
-		return m.handleControlsUpdate(msg)
+		return m.handleMenuUpdate(msg)
 	}
 	return m, cmd
 }
@@ -38,7 +38,7 @@ func (m Model) handleSettingsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Settings.ShouldClose {
 		m.Settings.ShouldClose = false
-		return m.handleControlsUpdate(msg)
+		return m.handleMenuUpdate(msg)
 	}
 
 	return m, cmd
@@ -50,38 +50,33 @@ func (m Model) handleExportUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Export.ShouldClose {
 		m.Export.ShouldClose = false
-		return m.handleControlsUpdate(msg)
+		return m.handleMenuUpdate(msg)
 	}
 
 	return m, cmd
 }
 
-func (m Model) handleControlsUpdate(msg tea.Msg) (Model, tea.Cmd) {
-	// This should only happen if
-	m.active = None
-
-	// if key message, determine if we need to switch our button
+func (m Model) handleMenuUpdate(msg tea.Msg) (Model, tea.Cmd) {
+	m.active = Menu
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		return m.handleKeyMsg(msg)
-	}
-	return m, nil
-}
+		switch {
 
-func (m Model) handleKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
-	switch {
-	case key.Matches(msg, io.KeyMap.Nav):
-		if key.Matches(msg, io.KeyMap.Right) {
-			if next, hasNext := navMap[Right][m.focus]; hasNext {
-				m.focus = next
-			}
-		} else if key.Matches(msg, io.KeyMap.Left) {
-			if next, hasNext := navMap[Left][m.focus]; hasNext {
-				m.focus = next
+		case key.Matches(msg, io.KeyMap.Enter):
+			m.active = m.focus
+
+		case key.Matches(msg, io.KeyMap.Nav):
+			switch {
+			case key.Matches(msg, io.KeyMap.Right):
+				if next, hasNext := navMap[Right][m.focus]; hasNext {
+					m.focus = next
+				}
+			case key.Matches(msg, io.KeyMap.Left):
+				if next, hasNext := navMap[Left][m.focus]; hasNext {
+					m.focus = next
+				}
 			}
 		}
-	case key.Matches(msg, io.KeyMap.Enter):
-		m.active = m.focus
 	}
 	return m, nil
 }

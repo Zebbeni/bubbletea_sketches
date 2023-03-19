@@ -12,7 +12,7 @@ import (
 type State int
 
 const (
-	None State = iota
+	Menu State = iota
 	Open
 	Settings
 	Export
@@ -38,7 +38,7 @@ type Model struct {
 
 func New() Model {
 	return Model{
-		active: None,
+		active: Menu,
 		focus:  Open,
 
 		FileBrowser: browser.New(),
@@ -60,7 +60,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case Export:
 		return m.handleExportUpdate(msg)
 	}
-	return m.handleControlsUpdate(msg)
+	return m.handleMenuUpdate(msg)
 }
 
 // View displays a row of 3 buttons above 1 of 3 control panels:

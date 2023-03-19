@@ -5,12 +5,12 @@ import "github.com/charmbracelet/lipgloss"
 var (
 	activeStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#ffffff")).
-			Foreground(lipgloss.Color("#ffffff"))
-	focusStyle = lipgloss.NewStyle().
-			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("#aaaaaa")).
 			Foreground(lipgloss.Color("#aaaaaa"))
+	focusStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#ffffff")).
+			Foreground(lipgloss.Color("#ffffff"))
 	normalStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("#555555")).

@@ -35,3 +35,8 @@ func (m Renderer) createBlockFuncs() map[rune]blockFunc {
 	//	'▀': m.calcTop,
 	//}
 }
+
+// |▖|▘|▝|▗|▞|▚|▙|▛|▜|▟
+// |▐|▌ |█|▀|▄
+// ▛▌▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐█
+// ▛▌ ▌▐▗▟▐▐▄▐▜▐▖▌▐▄▐▄▐▐

@@ -44,7 +44,7 @@ func pollForSizeChange() tea.Msg {
 }
 
 func (m Model) leftPanelWidth() int {
-	return 30
+	return 36
 }
 
 func (m Model) leftPanelHeight() int {

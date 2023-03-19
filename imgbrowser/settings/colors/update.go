@@ -7,6 +7,20 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
+type Direction int
+
+const (
+	Left Direction = iota
+	Right
+	Up
+)
+
+var navMap = map[Direction]map[State]State{
+	Right: {TrueColor: Adaptive, Adaptive: Paletted},
+	Left:  {Paletted: Adaptive, Adaptive: TrueColor},
+	Up:    {TrueColor: None, Adaptive: None, Paletted: None},
+}
+
 func (m Model) handleMenuUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -22,12 +36,24 @@ func (m Model) handleMenuUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m Model) handleAdaptiveUpdate(msg tea.Msg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+	m.Adaptive, cmd = m.Adaptive.Update(msg)
+	if m.Adaptive.ShouldClose {
+		m.Adaptive.ShouldClose = false
+		m.active = None
+		return m, cmd
+	}
+	return m, cmd
+}
+
 func (m Model) handlePaletteUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.Palette, cmd = m.Palette.Update(msg)
 	if m.Palette.ShouldClose {
-		m.state = Menu
 		m.Palette.ShouldClose = false
+		m.active = None
+		return m, cmd
 	}
 	return m, cmd
 }
@@ -38,12 +64,26 @@ func (m Model) handleEsc() (Model, tea.Cmd) {
 }
 
 func (m Model) handleEnter() (Model, tea.Cmd) {
-	selectedItem := m.menu.SelectedItem().(item)
-	return selectedItem.onSelect(m)
+	m.active = m.focus
+	return m, nil
 }
 
 func (m Model) handleNav(msg tea.KeyMsg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
-	m.menu, cmd = m.menu.Update(msg)
+	switch {
+	case key.Matches(msg, io.KeyMap.Right):
+		if next, hasNext := navMap[Right][m.focus]; hasNext {
+			m.focus = next
+		}
+	case key.Matches(msg, io.KeyMap.Left):
+		if next, hasNext := navMap[Left][m.focus]; hasNext {
+			m.focus = next
+		}
+	case key.Matches(msg, io.KeyMap.Up):
+		if next, hasNext := navMap[Up][m.active]; hasNext {
+			m.active = next
+		}
+	}
+
 	return m, cmd
 }

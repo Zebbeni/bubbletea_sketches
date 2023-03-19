@@ -31,10 +31,10 @@ func (m Renderer) process(input image.Image, width int) string {
 
 	_, colorPalette = m.Settings.Colors.Palette.GetCurrent()
 
-	if m.Settings.Colors.IsDithered {
+	if m.Settings.Colors.IsDithered() {
 		ditherer := dither.NewDitherer(colorPalette)
-		ditherer.Matrix = m.Settings.Colors.Matrix.Method
-		if m.Settings.Colors.IsSerpentine {
+		ditherer.Matrix = m.Settings.Colors.Matrix()
+		if m.Settings.Colors.IsSerpentine() {
 			ditherer.Serpentine = true
 		}
 		refImg = ditherer.Dither(refImg)
@@ -95,7 +95,7 @@ func (m Renderer) avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 	count := float64(len(colors))
 	avg := colorful.Color{R: rSum / count, G: gSum / count, B: bSum / count}
 
-	if m.Settings.Colors.IsLimited {
+	if m.Settings.Colors.IsLimited() {
 		paletteAvg := colorPalette.Convert(avg)
 		avg, _ = colorful.MakeColor(paletteAvg)
 	}
