@@ -27,7 +27,7 @@ func (m Model) handleOpenUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.FileBrowser.ShouldClose {
 		m.FileBrowser.ShouldClose = false
-		return m.handleMenuUpdate(msg)
+		m.active = Menu
 	}
 	return m, cmd
 }
@@ -38,7 +38,7 @@ func (m Model) handleSettingsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Settings.ShouldClose {
 		m.Settings.ShouldClose = false
-		return m.handleMenuUpdate(msg)
+		m.active = Menu
 	}
 
 	return m, cmd
@@ -50,7 +50,7 @@ func (m Model) handleExportUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Export.ShouldClose {
 		m.Export.ShouldClose = false
-		return m.handleMenuUpdate(msg)
+		m.active = Menu
 	}
 
 	return m, cmd

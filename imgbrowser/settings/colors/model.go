@@ -67,6 +67,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	title := m.drawTitle()
 	buttons := m.drawButtons()
 	var controls string
 	switch m.active {
@@ -76,7 +77,7 @@ func (m Model) View() string {
 		controls = m.Palette.View()
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Top, buttons, controls)
+	return lipgloss.JoinVertical(lipgloss.Top, title, buttons, controls)
 }
 
 func (m Model) IsLimited() bool {

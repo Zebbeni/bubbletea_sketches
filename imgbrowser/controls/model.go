@@ -66,6 +66,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 // View displays a row of 3 buttons above 1 of 3 control panels:
 // Open | Settings | Export
 func (m Model) View() string {
+	title := m.drawTitle()
+
 	// draw the top three buttons
 	buttons := m.drawButtons()
 	var controls string
@@ -79,5 +81,5 @@ func (m Model) View() string {
 		controls = m.Export.View()
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Top, buttons, controls)
+	return lipgloss.JoinVertical(lipgloss.Top, title, buttons, controls)
 }

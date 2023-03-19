@@ -5,8 +5,8 @@ import "github.com/charmbracelet/lipgloss"
 var (
 	stateOrder = []State{TrueColor, Adaptive, Paletted}
 	stateNames = map[State]string{
-		TrueColor: "True Color",
-		Adaptive:  "Adaptive",
+		TrueColor: "True",
+		Adaptive:  "Adapt",
 		Paletted:  "Palette",
 	}
 
@@ -22,7 +22,13 @@ var (
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("#555555")).
 			Foreground(lipgloss.Color("#555555"))
+	titleStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#888888"))
 )
+
+func (m Model) drawTitle() string {
+	return titleStyle.Copy().Width(30).Align(lipgloss.Center).Render("Colors")
+}
 
 func (m Model) drawButtons() string {
 	buttons := make([]string, len(stateOrder))
@@ -33,7 +39,7 @@ func (m Model) drawButtons() string {
 		} else if state == m.focus {
 			style = focusStyle
 		}
-		buttons[i] = style.Copy().Width(10).Align(lipgloss.Center).Render(stateNames[state])
+		buttons[i] = style.Copy().Width(8).Align(lipgloss.Center).Render(stateNames[state])
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
 }

@@ -17,6 +17,12 @@ var (
 			Foreground(lipgloss.Color("#555555"))
 )
 
+func (m Model) drawTitle() string {
+	title := "▛▜▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐█\n" +
+		"▛▜▐▐▗▟▐▐▄▐▜▐▄▐▐▄▐▄▐▐"
+	return lipgloss.NewStyle().Width(30).AlignHorizontal(lipgloss.Center).Padding(1, 1, 0, 1).Render(title)
+}
+
 func (m Model) drawButtons() string {
 	buttons := make([]string, len(stateOrder))
 	for i, state := range stateOrder {
@@ -26,7 +32,7 @@ func (m Model) drawButtons() string {
 		} else if state == m.focus {
 			style = focusStyle
 		}
-		buttons[i] = style.Copy().Render(stateNames[state])
+		buttons[i] = style.Copy().Width(8).Align(lipgloss.Center).Render(stateNames[state])
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
 }
