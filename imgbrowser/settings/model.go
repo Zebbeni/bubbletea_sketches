@@ -1,31 +1,38 @@
 package settings
 
 import (
-	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/characters"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/colors"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings/sampling"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/size"
 )
 
 type Model struct {
-	state State
-	menu  list.Model
+	active State
 
-	Colors   colors.Model
-	Sampling sampling.Model
+	Colors     colors.Model
+	Characters characters.Model
+	Size       size.Model
+	Sampling   sampling.Model
 
-	ShouldClose bool
-
-	isFocused bool
+	ShouldUnfocus bool
+	ShouldClose   bool
 }
 
 func New() Model {
 	return Model{
-		state:    Menu,
-		menu:     newMenu(),
-		Colors:   colors.New(),
-		Sampling: sampling.New(),
+		active: Colors,
+
+		Colors:     colors.New(),
+		Characters: characters.New(),
+		Size:       size.New(),
+		Sampling:   sampling.New(),
+
+		ShouldUnfocus: false,
+		ShouldClose:   false,
 	}
 }
 
@@ -34,11 +41,13 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
-	switch m.state {
-	case Menu:
-		return m.handleMenuUpdate(msg)
+	switch m.active {
 	case Colors:
 		return m.handleColorsUpdate(msg)
+	case Characters:
+		return m.handleCharactersUpdate(msg)
+	case Size:
+		return m.handleSizeUpdate(msg)
 	case Sampling:
 		return m.handleSamplingUpdate(msg)
 	}
@@ -46,25 +55,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	switch m.state {
-	case Menu:
-		return m.menu.View()
-	case Colors:
-		return m.Colors.View()
-	case Sampling:
-		return m.Sampling.View()
-		//case Limited:
-		//case Colors:
-		//case Characters:
-	}
-	return m.menu.View()
-}
-
-func (m Model) Focus() Model {
-	m.isFocused = true
-	return m
-}
-
-func (m Model) IsFocused() bool {
-	return m.isFocused
+	col := m.Colors.View()
+	char := m.Characters.View()
+	siz := m.Size.View()
+	sam := m.Sampling.View()
+	return lipgloss.JoinVertical(lipgloss.Top, col, char, siz, sam)
 }

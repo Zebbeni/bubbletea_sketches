@@ -3,15 +3,18 @@ package settings
 type State int
 
 const (
-	Menu State = iota
+	None State = iota
 	Colors
-	Sampling
 	Characters
+	Size
+	Sampling
 )
 
 var States = []State{
-	Menu,
 	Colors,
-	Sampling,
 	Characters,
+	Size,
+	Sampling,
 }
+
+var stateOrder = []State{Colors, Characters, Size, Sampling}

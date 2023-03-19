@@ -36,7 +36,6 @@ func (m Model) handleSettingsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.Settings, cmd = m.Settings.Update(msg)
 
-	// if Settings no longer focused, handle the message at the control level
 	if m.Settings.ShouldClose {
 		m.Settings.ShouldClose = false
 		return m.handleControlsUpdate(msg)
@@ -64,35 +63,25 @@ func (m Model) handleControlsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	// if key message, determine if we need to switch our button
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, io.KeyMap.Nav):
-			if key.Matches(msg, io.KeyMap.Right) {
-				if next, hasNext := navMap[Right][m.focus]; hasNext {
-					m.focus = next
-				}
-			} else if key.Matches(msg, io.KeyMap.Left) {
-				if next, hasNext := navMap[Left][m.focus]; hasNext {
-					m.focus = next
-				}
+		return m.handleKeyMsg(msg)
+	}
+	return m, nil
+}
+
+func (m Model) handleKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
+	switch {
+	case key.Matches(msg, io.KeyMap.Nav):
+		if key.Matches(msg, io.KeyMap.Right) {
+			if next, hasNext := navMap[Right][m.focus]; hasNext {
+				m.focus = next
 			}
-		case key.Matches(msg, io.KeyMap.Enter):
-			m.active = m.focus
-			switch m.active {
-			case Open:
-				m.FileBrowser = m.FileBrowser
-			case Settings:
-				m.Settings = m.Settings
-			case Export:
-				m.Export = m.Export
+		} else if key.Matches(msg, io.KeyMap.Left) {
+			if next, hasNext := navMap[Left][m.focus]; hasNext {
+				m.focus = next
 			}
-			// Okay this is the problem. Right here we want to call
-			// 'Focus()' on the currently focused model. But I really
-			// don't want to do another switch case on m.active and do
-			// the same thing for each panel type. It would be nice if
-			// we could store all panels in a map of Focusable pointers
-			// (Actually, I'm referring to what we should do when we set
-			// m.active. But same point. My mistake)
 		}
+	case key.Matches(msg, io.KeyMap.Enter):
+		m.active = m.focus
 	}
 	return m, nil
 }

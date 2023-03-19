@@ -9,6 +9,8 @@ type Map struct {
 	Nav   key.Binding
 	Right key.Binding
 	Left  key.Binding
+	Up    key.Binding
+	Down  key.Binding
 	Esc   key.Binding
 }
 
@@ -29,6 +31,12 @@ func InitKeyMap() {
 		),
 		Left: key.NewBinding(
 			key.WithKeys("left"),
+		),
+		Up: key.NewBinding(
+			key.WithKeys("up"),
+		),
+		Down: key.NewBinding(
+			key.WithKeys("down"),
 		),
 		Esc: key.NewBinding(
 			key.WithKeys("esc"),

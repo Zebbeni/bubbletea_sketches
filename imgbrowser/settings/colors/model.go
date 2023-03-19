@@ -44,7 +44,8 @@ type Model struct {
 	showPaletteMenu bool
 	showMatrixMenu  bool
 
-	ShouldClose bool
+	ShouldClose   bool
+	ShouldUnfocus bool
 }
 
 func New() Model {
