@@ -56,3 +56,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	return m.drawButtons()
 }
+
+func (m Model) Selected() State {
+	return m.active
+}

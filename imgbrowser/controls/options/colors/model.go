@@ -31,9 +31,9 @@ const (
 )
 
 type Model struct {
-	active State // the panel taking input
-	focus  State // the focused button
-	mode   State // the mode currently in use for rendering
+	active   State // the panel taking input
+	focus    State // the focused button
+	selected State
 
 	Adaptive adaptive.Model
 	Palette  palette.Model
@@ -88,15 +88,15 @@ func (m Model) View() string {
 }
 
 func (m Model) IsLimited() bool {
-	return true
+	return m.selected != TrueColor
 }
 
 func (m Model) IsDithered() bool {
-	return true
+	return false
 }
 
 func (m Model) IsSerpentine() bool {
-	return true
+	return false
 }
 
 func (m Model) Matrix() dither.ErrorDiffusionMatrix {

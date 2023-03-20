@@ -65,6 +65,7 @@ func (m Model) handleEsc() (Model, tea.Cmd) {
 
 func (m Model) handleEnter() (Model, tea.Cmd) {
 	m.active = m.focus
+	m.selected = m.active
 	return m, io.StartRenderCmd
 }
 
