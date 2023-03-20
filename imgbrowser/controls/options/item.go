@@ -3,7 +3,7 @@ package options
 import (
 	"github.com/charmbracelet/bubbles/list"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/menu"
 )
 
 type item struct {

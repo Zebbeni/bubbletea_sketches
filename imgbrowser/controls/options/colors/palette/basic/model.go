@@ -7,8 +7,8 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/menu"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/menu"
 )
 
 type Model struct {

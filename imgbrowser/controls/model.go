@@ -5,8 +5,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/browser"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/export"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/export"
 )
 
 type State int

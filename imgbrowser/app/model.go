@@ -57,10 +57,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m.handleStartRenderMsg()
 	case io.FinishRenderMsg:
 		return m.handleFinishRenderMsg(msg)
-	default:
-		return m.handleControlsUpdate(msg)
 	}
-	return m, nil
+	return m.handleControlsUpdate(msg)
 }
 
 func (m Model) View() string {

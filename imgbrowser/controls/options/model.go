@@ -8,7 +8,6 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/colors"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/sampling"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/size"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/style"
 )
 
 type Model struct {
@@ -64,34 +63,4 @@ func (m Model) View() string {
 	sam := m.renderWithBorder(m.Sampling.View(), Sampling)
 
 	return lipgloss.JoinVertical(lipgloss.Top, col, char, siz, sam)
-}
-
-var (
-	activeColor = lipgloss.Color("#aaaaaa")
-	focusColor  = lipgloss.Color("#ffffff")
-	normalColor = lipgloss.Color("#555555")
-)
-
-func (m Model) renderWithBorder(content string, state State) string {
-	renderColor := normalColor
-	if m.active == state {
-		renderColor = activeColor
-	} else if m.focus == state {
-		renderColor = focusColor
-	}
-
-	textStyle := lipgloss.NewStyle().
-		AlignHorizontal(lipgloss.Center).
-		Padding(0, 1, 0, 1).
-		Foreground(renderColor)
-	borderStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(renderColor)
-
-	renderer := style.BoxWithLabel{
-		BoxStyle:   borderStyle,
-		LabelStyle: textStyle,
-	}
-
-	return renderer.Render(stateTitles[state], content, 30)
 }

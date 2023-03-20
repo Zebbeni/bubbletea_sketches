@@ -5,11 +5,10 @@ import (
 )
 
 func New(items []list.Item) list.Model {
-	newList := list.New(items, NewDelegate(), 30, 30)
+	newList := list.New(items, NewDelegate(), 25, 20)
 
 	newList.KeyMap.ForceQuit.Unbind()
 	newList.KeyMap.Quit.Unbind()
-
 	newList.SetShowHelp(false)
 	newList.SetShowStatusBar(false)
 	newList.SetShowTitle(false)

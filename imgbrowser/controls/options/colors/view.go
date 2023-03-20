@@ -27,7 +27,7 @@ var (
 )
 
 func (m Model) drawTitle() string {
-	return titleStyle.Copy().Width(27).Align(lipgloss.Center).Render("Colors")
+	return titleStyle.Copy().Width(24).Align(lipgloss.Center).Render("Colors")
 }
 
 func (m Model) drawButtons() string {
@@ -39,7 +39,7 @@ func (m Model) drawButtons() string {
 		} else if state == m.focus {
 			style = focusStyle
 		}
-		buttons[i] = style.Copy().Width(8).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
+		buttons[i] = style.Copy().Width(7).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
 }

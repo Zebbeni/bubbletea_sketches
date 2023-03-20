@@ -18,9 +18,14 @@ var (
 )
 
 func (m Model) drawTitle() string {
-	title := "  ▛▜▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐▀▌" +
-		"\n▛▜▐▐▗▟▐▐▄▐▜▐▄▐▐▄▐▄▐▜ "
-	return lipgloss.NewStyle().Width(30).AlignHorizontal(lipgloss.Center).Padding(1).Render(title)
+	//title1Runes := "▛▜▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐▀▌"
+	//title2Runes := "▛▜▐▐▗▟▐▐▄▐▜▐▄▐▐▄▐▄▐▜"
+	title1Runes := []rune{' ', '▛', '▜', '▐', '▜', '▐', '▀', '▐', '▝', '▜', '▐', '▜', '▐', ' ', '▐', '▝', '▜', '▐', '▛', '▐', '▀', '▌'}
+	title2Runes := []rune{'▛', '▜', '▐', '▐', '▗', '▟', '▐', '▐', '▄', '▐', '▜', '▐', '▄', '▐', '▐', '▄', '▐', '▄', '▐', '▜'}
+	title1 := lipgloss.JoinHorizontal(lipgloss.Left, string(title1Runes))
+	title2 := lipgloss.JoinHorizontal(lipgloss.Left, string(title2Runes))
+	title := lipgloss.JoinVertical(lipgloss.Left, title1, title2)
+	return lipgloss.NewStyle().Width(30).AlignHorizontal(lipgloss.Center).Padding(1, 1, 0, 1).Render(title)
 }
 
 func (m Model) drawButtons() string {
@@ -32,7 +37,9 @@ func (m Model) drawButtons() string {
 		} else if state == m.focus {
 			style = focusStyle
 		}
-		buttons[i] = style.Copy().Width(8).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
+		buttons[i] = style.Copy().Width(7).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
 	}
-	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
+	buttonRow := lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
+
+	return lipgloss.NewStyle().Padding(0, 1, 0, 1).Render(buttonRow)
 }
