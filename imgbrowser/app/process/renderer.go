@@ -3,15 +3,15 @@ package process
 import (
 	"github.com/lucasb-eyer/go-colorful"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
 )
 
 type Renderer struct {
-	Settings   settings.Model
+	Settings   options.Model
 	blockFuncs map[rune]blockFunc
 }
 
-func New(s settings.Model) Renderer {
+func New(s options.Model) Renderer {
 	m := Renderer{
 		Settings: s,
 	}

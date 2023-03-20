@@ -22,7 +22,7 @@ func (i item) Description() string {
 func newMenu() list.Model {
 	items := []list.Item{
 		item{name: "File", state: Browser},
-		item{name: "Settings", state: Settings},
+		item{name: "Options", state: Settings},
 	}
 	menu := list.New(items, NewDelegate(), 20, 20)
 	menu.SetShowHelp(false)

@@ -4,9 +4,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/browser"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/browser"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/export"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
 type State int
@@ -14,16 +14,16 @@ type State int
 const (
 	Menu State = iota
 	Open
-	Settings
+	Options
 	Export
 )
 
 var (
-	stateOrder = []State{Open, Settings, Export}
+	stateOrder = []State{Open, Options, Export}
 	stateNames = map[State]string{
-		Open:     "Open",
-		Settings: "Settings",
-		Export:   "Export",
+		Open:    "Open",
+		Options: "Options",
+		Export:  "Export",
 	}
 )
 
@@ -32,7 +32,7 @@ type Model struct {
 	focus  State
 
 	FileBrowser browser.Model
-	Settings    settings.Model
+	Options     options.Model
 	Export      export.Model
 }
 
@@ -42,7 +42,7 @@ func New() Model {
 		focus:  Open,
 
 		FileBrowser: browser.New(),
-		Settings:    settings.New(),
+		Options:     options.New(),
 		Export:      export.New(),
 	}
 }
@@ -55,7 +55,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch m.active {
 	case Open:
 		return m.handleOpenUpdate(msg)
-	case Settings:
+	case Options:
 		return m.handleSettingsUpdate(msg)
 	case Export:
 		return m.handleExportUpdate(msg)
@@ -64,7 +64,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 // View displays a row of 3 buttons above 1 of 3 control panels:
-// Open | Settings | Export
+// Open | Options | Export
 func (m Model) View() string {
 	title := m.drawTitle()
 
@@ -75,8 +75,8 @@ func (m Model) View() string {
 	switch m.active {
 	case Open:
 		controls = m.FileBrowser.View()
-	case Settings:
-		controls = m.Settings.View()
+	case Options:
+		controls = m.Options.View()
 	case Export:
 		controls = m.Export.View()
 	}

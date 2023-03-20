@@ -18,9 +18,9 @@ var (
 )
 
 func (m Model) drawTitle() string {
-	title := "▛▜▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐█\n" +
-		"▛▜▐▐▗▟▐▐▄▐▜▐▄▐▐▄▐▄▐▐"
-	return lipgloss.NewStyle().Width(30).AlignHorizontal(lipgloss.Center).Padding(1, 1, 0, 1).Render(title)
+	title := "  ▛▜▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐▀▌" +
+		"\n▛▜▐▐▗▟▐▐▄▐▜▐▄▐▐▄▐▄▐▜ "
+	return lipgloss.NewStyle().Width(30).AlignHorizontal(lipgloss.Center).Padding(1).Render(title)
 }
 
 func (m Model) drawButtons() string {
@@ -32,7 +32,7 @@ func (m Model) drawButtons() string {
 		} else if state == m.focus {
 			style = focusStyle
 		}
-		buttons[i] = style.Copy().Width(8).Align(lipgloss.Center).Render(stateNames[state])
+		buttons[i] = style.Copy().Width(8).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
 }

@@ -5,10 +5,10 @@ import (
 	"image"
 	"os"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
 )
 
-func RenderImageFile(s settings.Model, imgFilePath string) string {
+func RenderImageFile(s options.Model, imgFilePath string) string {
 	if imgFilePath == "" {
 		return "Choose an image to render"
 	}

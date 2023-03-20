@@ -24,7 +24,7 @@ func (m Model) handleFinishRenderMsg(msg io.FinishRenderMsg) (Model, tea.Cmd) {
 }
 
 func (m Model) processRenderCmd() tea.Msg {
-	imgString := process.RenderImageFile(m.controls.Settings, m.controls.FileBrowser.ActiveFile)
+	imgString := process.RenderImageFile(m.controls.Options, m.controls.FileBrowser.ActiveFile)
 	return io.FinishRenderMsg{FilePath: m.controls.FileBrowser.ActiveFile, ImgString: imgString}
 }
 

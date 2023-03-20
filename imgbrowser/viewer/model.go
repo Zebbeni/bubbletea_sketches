@@ -3,13 +3,13 @@ package viewer
 import (
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
 )
 
 type Model struct {
 	imgString string
-	settings  settings.Model
+	settings  options.Model
 
 	WaitingOnRender bool
 }
