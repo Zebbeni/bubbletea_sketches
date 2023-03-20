@@ -40,6 +40,8 @@ type Model struct {
 
 	ShouldClose      bool
 	ShouldDeactivate bool
+
+	IsActive bool
 }
 
 func New() Model {
@@ -50,6 +52,7 @@ func New() Model {
 		Palette:          palette.New(),
 		ShouldClose:      false,
 		ShouldDeactivate: false,
+		IsActive:         false,
 	}
 	return m
 }

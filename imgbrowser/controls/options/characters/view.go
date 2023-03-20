@@ -1,13 +1,12 @@
-package colors
+package characters
 
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	stateOrder = []State{TrueColor, Adaptive, Paletted}
+	stateOrder = []State{Ascii, Blocks}
 	stateNames = map[State]string{
-		TrueColor: "True",
-		Adaptive:  "Adapt",
-		Paletted:  "Palette",
+		Ascii:  "Ascii",
+		Blocks: "Blocks",
 	}
 
 	activeStyle = lipgloss.NewStyle().
@@ -26,10 +25,6 @@ var (
 			Foreground(lipgloss.Color("#888888"))
 )
 
-func (m Model) drawTitle() string {
-	return titleStyle.Copy().Width(24).Align(lipgloss.Center).Render("Colors")
-}
-
 func (m Model) drawButtons() string {
 	buttons := make([]string, len(stateOrder))
 	for i, state := range stateOrder {
@@ -41,7 +36,7 @@ func (m Model) drawButtons() string {
 				style = focusStyle
 			}
 		}
-		buttons[i] = style.Copy().Width(7).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
+		buttons[i] = style.Copy().Width(11).AlignHorizontal(lipgloss.Center).Render(stateNames[state])
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, buttons...)
 }

@@ -33,6 +33,7 @@ func (m Model) handleColorsUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Colors.ShouldClose {
 		m.active = None
+		m.Colors.IsActive = false
 		m.Colors.ShouldClose = false
 	}
 	return m, cmd
@@ -79,6 +80,12 @@ func (m Model) handleMenuUpdate(msg tea.Msg) (Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, io.KeyMap.Enter):
 			m.active = m.focus
+			switch m.active {
+			case Colors:
+				m.Colors.IsActive = true
+			case Characters:
+				m.Characters.IsActive = true
+			}
 		case key.Matches(msg, io.KeyMap.Esc):
 			m.ShouldClose = true
 		case key.Matches(msg, io.KeyMap.Nav):

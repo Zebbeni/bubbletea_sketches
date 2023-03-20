@@ -31,12 +31,4 @@ func (m Renderer) createBlockFuncs() map[rune]blockFunc {
 		'▝': m.calcTopRight,
 		'▗': m.calcBotRight,
 	}
-	//return map[rune]blockFunc{
-	//	'▀': m.calcTop,
-	//}
 }
-
-// |▖|▘|▝|▗|▞|▚|▙|▛|▜|▟
-// |▐|▌ |█|▀|▄
-// ▛▌▐▜▐▀▐▝▜▐▜▐ ▐▝▜▐▛▐█
-// ▛▌ ▌▐▗▟▐▐▄▐▜▐▖▌▐▄▐▄▐▐

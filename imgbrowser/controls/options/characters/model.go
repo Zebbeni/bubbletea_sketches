@@ -7,15 +7,30 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
+type State int
+
+const (
+	Ascii State = iota
+	Blocks
+)
+
 type Model struct {
+	focus  State
+	active State
+
 	ShouldClose   bool
 	ShouldUnfocus bool
+
+	IsActive bool
 }
 
 func New() Model {
 	return Model{
+		focus:         Ascii,
+		active:        Ascii,
 		ShouldClose:   false,
 		ShouldUnfocus: false,
+		IsActive:      false,
 	}
 }
 
@@ -27,15 +42,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, io.KeyMap.Enter):
+			return m.handleEnter()
 		case key.Matches(msg, io.KeyMap.Nav):
-			m.ShouldUnfocus = true
+			return m.handleNav(msg)
 		case key.Matches(msg, io.KeyMap.Esc):
-			m.ShouldClose = true
+			return m.handleEsc()
 		}
 	}
 	return m, nil
 }
 
 func (m Model) View() string {
-	return "Characters"
+	return m.drawButtons()
 }

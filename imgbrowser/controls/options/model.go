@@ -4,7 +4,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/characters"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/colors"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/sampling"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/size"

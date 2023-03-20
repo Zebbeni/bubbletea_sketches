@@ -65,7 +65,7 @@ func (m Model) handleEsc() (Model, tea.Cmd) {
 
 func (m Model) handleEnter() (Model, tea.Cmd) {
 	m.active = m.focus
-	return m, nil
+	return m, io.StartRenderCmd
 }
 
 func (m Model) handleNav(msg tea.KeyMsg) (Model, tea.Cmd) {
