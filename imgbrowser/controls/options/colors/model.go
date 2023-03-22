@@ -96,7 +96,7 @@ func (m Model) IsDithered() bool {
 }
 
 func (m Model) IsSerpentine() bool {
-	return false
+	return true
 }
 
 func (m Model) Matrix() dither.ErrorDiffusionMatrix {

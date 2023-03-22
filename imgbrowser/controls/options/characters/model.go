@@ -15,13 +15,11 @@ const (
 )
 
 type Model struct {
-	focus  State
-	active State
-
+	focus         State
+	active        State
 	ShouldClose   bool
 	ShouldUnfocus bool
-
-	IsActive bool
+	IsActive      bool
 }
 
 func New() Model {

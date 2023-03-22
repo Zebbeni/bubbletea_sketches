@@ -45,6 +45,7 @@ func (m Model) handleCharactersUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 	if m.Characters.ShouldClose {
 		m.active = None
+		m.Characters.IsActive = false
 		m.Characters.ShouldClose = false
 	}
 	return m, cmd
@@ -55,6 +56,7 @@ func (m Model) handleSizeUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	m.Size, cmd = m.Size.Update(msg)
 	if m.Size.ShouldClose {
 		m.active = None
+		m.Size.IsActive = false
 		m.Size.ShouldClose = false
 	}
 	if m.Size.ShouldUnfocus {
@@ -85,6 +87,8 @@ func (m Model) handleMenuUpdate(msg tea.Msg) (Model, tea.Cmd) {
 				m.Colors.IsActive = true
 			case Characters:
 				m.Characters.IsActive = true
+			case Size:
+				m.Size.IsActive = true
 			}
 		case key.Matches(msg, io.KeyMap.Esc):
 			m.ShouldClose = true

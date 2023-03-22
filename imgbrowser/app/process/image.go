@@ -33,13 +33,13 @@ func RenderImageFile(s options.Model, imgFilePath string) string {
 	}
 
 	renderer := New(s)
-	imgString := renderer.process(img, 35)
+	imgString := renderer.process(img)
 	return imgString
 }
 
-func (m Renderer) process(input image.Image, width int) string {
+func (m Renderer) process(input image.Image) string {
 	if m.Settings.Characters.Selected() == characters.Ascii {
-		return m.processAscii(input, width)
+		return m.processAscii(input)
 	}
-	return m.processBlocks(input, width)
+	return m.processBlocks(input)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/colors"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/sampling"
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/size"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/size"
 )
 
 type Model struct {

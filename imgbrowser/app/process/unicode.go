@@ -11,15 +11,24 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/makeworld-the-better-one/dither/v2"
 	"github.com/nfnt/resize"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/size"
 )
 
-func (m Renderer) processBlocks(input image.Image, width int) string {
+func (m Renderer) processBlocks(input image.Image) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
-	height := int(float32(width) * (imgH / imgW) * PROPORTION)
 
-	// resize the sample to be twice the width and height we want to render
-	// since we'll try to use each block character to mimic 4 pixels
-	// TODO: Revisit this assumption when we can change allowed characters
+	dimensionType, width, height := m.Settings.Size.Info()
+	if dimensionType == size.Fit {
+		fitHeight := float32(width) * (imgH / imgW) * PROPORTION
+		fitWidth := (float32(height) * (imgW / imgH)) / PROPORTION
+		if fitHeight > float32(height) {
+			width = int(fitWidth)
+		} else {
+			height = int(fitHeight)
+		}
+	}
+
 	resizeFunc := m.Settings.Sampling.Function
 	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, resizeFunc)
 
