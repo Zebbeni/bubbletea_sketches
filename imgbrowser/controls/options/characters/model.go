@@ -8,39 +8,22 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/io"
 )
 
-type Mode int
-
-const (
-	Ascii Mode = iota
-	Unicode
-)
-
-type CharMode int
-
-const (
-	AzAscii CharMode = iota
-	NumAscii
-	SpecAscii
-	AllAscii
-	FullBlockUnicode
-	HalfBlockUnicode
-	QuartBlockUnicode
-	ShadeBlockUnicode
-)
-
 type State int
 
 const (
-	AsciiButton State = iota
-	UnicodeButton
-	AsciiAzButton
-	AsciiNumButton
-	AsciiSpecButton
-	AsciiAllButton
-	UnicodeFullButton
-	UnicodeHalfButton
-	UnicodeQuartButton
-	UnicodeShadeButton
+	Ascii State = iota
+	Unicode
+	AsciiAz
+	AsciiNums
+	AsciiSpec
+	AsciiAll
+	UnicodeFull
+	UnicodeHalf
+	UnicodeQuart
+	UnicodeShadeLight
+	UnicodeShadeMed
+	UnicodeShadeHeavy
+	UnicodeShadeAll
 	OneColor
 	TwoColor
 )
@@ -48,10 +31,10 @@ const (
 type Model struct {
 	focus         State
 	active        State
-	mode          Mode
-	charButtons   Mode
-	unicodeMode   CharMode
-	asciiMode     CharMode
+	mode          State
+	charButtons   State
+	unicodeMode   State
+	asciiMode     State
 	useFgBg       State
 	ShouldClose   bool
 	ShouldUnfocus bool
@@ -60,12 +43,12 @@ type Model struct {
 
 func New() Model {
 	return Model{
-		focus:         AsciiButton,
-		active:        AsciiButton,
+		focus:         Ascii,
+		active:        Ascii,
 		mode:          Ascii,
 		charButtons:   Ascii,
-		asciiMode:     NumAscii,
-		unicodeMode:   NumAscii,
+		asciiMode:     AsciiAll,
+		unicodeMode:   UnicodeQuart,
 		useFgBg:       OneColor,
 		ShouldClose:   false,
 		ShouldUnfocus: false,
@@ -99,7 +82,7 @@ func (m Model) View() string {
 	return lipgloss.JoinVertical(lipgloss.Top, colorsButtons, modeButtons, charButtons)
 }
 
-func (m Model) Selected() (Mode, CharMode, State) {
+func (m Model) Selected() (State, State, State) {
 	charMode := m.asciiMode
 	if m.mode == Unicode {
 		charMode = m.unicodeMode

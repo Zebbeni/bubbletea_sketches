@@ -3,8 +3,9 @@ package process
 import (
 	"bufio"
 	"image"
-	"image/color"
 	"os"
+
+	"github.com/lucasb-eyer/go-colorful"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
@@ -12,8 +13,9 @@ import (
 
 const PROPORTION = 0.46
 
-// var color color.Palette
-var colorPalette color.Palette
+var (
+	black = colorful.Color{}
+)
 
 func RenderImageFile(s options.Model, imgFilePath string) string {
 	if imgFilePath == "" {

@@ -17,58 +17,57 @@ const (
 )
 
 var navMap = map[Direction]map[State]State{
-	Right: {AsciiButton: UnicodeButton,
-		AsciiAzButton:      AsciiNumButton,
-		AsciiNumButton:     AsciiSpecButton,
-		AsciiSpecButton:    AsciiAllButton,
-		UnicodeFullButton:  UnicodeHalfButton,
-		UnicodeHalfButton:  UnicodeQuartButton,
-		UnicodeQuartButton: UnicodeShadeButton,
-		OneColor:           TwoColor,
+	Right: {Ascii: Unicode,
+		AsciiAz:           AsciiNums,
+		AsciiNums:         AsciiSpec,
+		AsciiSpec:         AsciiAll,
+		UnicodeFull:       UnicodeHalf,
+		UnicodeHalf:       UnicodeQuart,
+		UnicodeQuart:      UnicodeShadeLight,
+		UnicodeShadeLight: UnicodeShadeMed,
+		UnicodeShadeMed:   UnicodeShadeHeavy,
+		UnicodeShadeHeavy: UnicodeShadeAll,
+		OneColor:          TwoColor,
 	},
-	Left: {UnicodeButton: AsciiButton,
-		AsciiAllButton:     AsciiSpecButton,
-		AsciiSpecButton:    AsciiNumButton,
-		AsciiNumButton:     AsciiAzButton,
-		UnicodeShadeButton: UnicodeQuartButton,
-		UnicodeQuartButton: UnicodeHalfButton,
-		UnicodeHalfButton:  UnicodeFullButton,
-		TwoColor:           OneColor,
+	Left: {Unicode: Ascii,
+		AsciiAll:          AsciiSpec,
+		AsciiSpec:         AsciiNums,
+		AsciiNums:         AsciiAz,
+		UnicodeShadeAll:   UnicodeShadeHeavy,
+		UnicodeShadeHeavy: UnicodeShadeMed,
+		UnicodeShadeMed:   UnicodeShadeLight,
+		UnicodeShadeLight: UnicodeQuart,
+		UnicodeQuart:      UnicodeHalf,
+		UnicodeHalf:       UnicodeFull,
+		TwoColor:          OneColor,
 	},
 	Up: {
-		AsciiButton:        OneColor,
-		UnicodeButton:      TwoColor,
-		AsciiAzButton:      AsciiButton,
-		AsciiNumButton:     AsciiButton,
-		AsciiSpecButton:    AsciiButton,
-		AsciiAllButton:     AsciiButton,
-		UnicodeFullButton:  UnicodeButton,
-		UnicodeHalfButton:  UnicodeButton,
-		UnicodeQuartButton: UnicodeButton,
-		UnicodeShadeButton: UnicodeButton,
+		Ascii:             OneColor,
+		Unicode:           TwoColor,
+		AsciiAz:           Ascii,
+		AsciiNums:         Ascii,
+		AsciiSpec:         Ascii,
+		AsciiAll:          Ascii,
+		UnicodeFull:       Unicode,
+		UnicodeHalf:       Unicode,
+		UnicodeQuart:      Unicode,
+		UnicodeShadeLight: Unicode,
+		UnicodeShadeMed:   Unicode,
+		UnicodeShadeHeavy: Unicode,
+		UnicodeShadeAll:   Unicode,
 	},
 	Down: {
-		OneColor: AsciiButton,
-		TwoColor: UnicodeButton,
+		OneColor: Ascii,
+		TwoColor: Unicode,
 
-		AsciiButton:   AsciiAzButton,
-		UnicodeButton: UnicodeShadeButton,
+		Ascii:   AsciiAz,
+		Unicode: UnicodeShadeMed,
 	},
 }
 
 var (
-	asciiCharModeMap = map[State]CharMode{
-		AsciiAzButton:   AzAscii,
-		AsciiNumButton:  NumAscii,
-		AsciiSpecButton: SpecAscii,
-		AsciiAllButton:  AllAscii,
-	}
-	unicodeCharModeMap = map[State]CharMode{
-		UnicodeFullButton:  FullBlockUnicode,
-		UnicodeHalfButton:  HalfBlockUnicode,
-		UnicodeQuartButton: QuartBlockUnicode,
-		UnicodeShadeButton: ShadeBlockUnicode,
-	}
+	asciiCharModeMap   = map[State]bool{AsciiAz: true, AsciiNums: true, AsciiSpec: true, AsciiAll: true}
+	unicodeCharModeMap = map[State]bool{UnicodeFull: true, UnicodeHalf: true, UnicodeQuart: true, UnicodeShadeLight: true, UnicodeShadeMed: true, UnicodeShadeHeavy: true, UnicodeShadeAll: true}
 )
 
 func (m Model) handleEsc() (Model, tea.Cmd) {
@@ -80,21 +79,23 @@ func (m Model) handleEnter() (Model, tea.Cmd) {
 	m.active = m.focus
 
 	switch m.active {
-	case AsciiButton:
+	case Ascii:
 		m.mode = Ascii
-	case UnicodeButton:
+	case Unicode:
 		m.mode = Unicode
 	case OneColor, TwoColor:
 		m.useFgBg = m.active
 	default:
-		switch m.mode {
+		switch m.charButtons {
 		case Ascii:
-			if charMode, ok := asciiCharModeMap[m.active]; ok {
-				m.asciiMode = charMode
+			if _, ok := asciiCharModeMap[m.active]; ok {
+				m.asciiMode = m.active
+				m.mode = Ascii
 			}
 		case Unicode:
-			if charMode, ok := unicodeCharModeMap[m.active]; ok {
-				m.unicodeMode = charMode
+			if _, ok := unicodeCharModeMap[m.active]; ok {
+				m.unicodeMode = m.active
+				m.mode = Unicode
 			}
 		}
 	}
@@ -126,9 +127,9 @@ func (m Model) handleNav(msg tea.KeyMsg) (Model, tea.Cmd) {
 
 func (m Model) setFocus(focus State) (Model, tea.Cmd) {
 	m.focus = focus
-	if m.focus == AsciiButton {
+	if m.focus == Ascii {
 		m.charButtons = Ascii
-	} else if m.focus == UnicodeButton {
+	} else if m.focus == Unicode {
 		m.charButtons = Unicode
 	}
 	return m, nil

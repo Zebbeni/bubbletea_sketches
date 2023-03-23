@@ -5,24 +5,27 @@ import (
 )
 
 var (
-	stateOrder         = []State{AsciiButton, UnicodeButton}
-	asciiButtonOrder   = []State{AsciiAzButton, AsciiNumButton, AsciiSpecButton, AsciiAllButton}
-	unicodeButtonOrder = []State{UnicodeFullButton, UnicodeHalfButton, UnicodeQuartButton, UnicodeShadeButton}
+	stateOrder         = []State{Ascii, Unicode}
+	asciiButtonOrder   = []State{AsciiAz, AsciiNums, AsciiSpec, AsciiAll}
+	unicodeButtonOrder = []State{UnicodeFull, UnicodeHalf, UnicodeQuart, UnicodeShadeLight, UnicodeShadeMed, UnicodeShadeHeavy, UnicodeShadeAll}
 	colorsButtonsOrder = []State{OneColor, TwoColor}
 
 	stateNames = map[State]string{
-		AsciiButton:        "Ascii",
-		UnicodeButton:      "Unicode",
-		AsciiAzButton:      "AZ",
-		AsciiNumButton:     "0-9",
-		AsciiSpecButton:    "!$",
-		AsciiAllButton:     "All",
-		UnicodeFullButton:  "1",
-		UnicodeHalfButton:  "1/2",
-		UnicodeQuartButton: "1/4",
-		UnicodeShadeButton: "░▒▓",
-		OneColor:           "1 Color",
-		TwoColor:           "2 Color",
+		Ascii:             "Ascii",
+		Unicode:           "Unicode",
+		AsciiAz:           "AZ",
+		AsciiNums:         "0-9",
+		AsciiSpec:         "!$",
+		AsciiAll:          "All",
+		UnicodeFull:       "█",
+		UnicodeHalf:       "▀▄",
+		UnicodeQuart:      "▞▟",
+		UnicodeShadeLight: "░",
+		UnicodeShadeMed:   "▒",
+		UnicodeShadeHeavy: "▓",
+		UnicodeShadeAll:   "░▒▓",
+		OneColor:          "1 Color",
+		TwoColor:          "2 Color",
 	}
 
 	activeColor = lipgloss.Color("#aaaaaa")
@@ -73,7 +76,7 @@ func (m Model) drawCharButtons() string {
 
 		// quick dirty stuff to make buttons fit nicely. Let's do this in a smarter / cleaner way later
 		if m.charButtons == Unicode {
-			buttons[i] = style.Copy().Padding(0, 1, 0, 1).Render(stateNames[state])
+			buttons[i] = style.Copy().Render(stateNames[state])
 		} else {
 			buttons[i] = style.Copy().Padding(0, 1, 0, 1).Render(stateNames[state])
 		}

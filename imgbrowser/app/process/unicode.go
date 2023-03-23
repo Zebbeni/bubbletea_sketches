@@ -12,8 +12,11 @@ import (
 	"github.com/makeworld-the-better-one/dither/v2"
 	"github.com/nfnt/resize"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/size"
 )
+
+var unicodeShadeChars = []rune{' ', '░', '▒', '▓'}
 
 func (m Renderer) processUnicode(input image.Image) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
@@ -32,10 +35,10 @@ func (m Renderer) processUnicode(input image.Image) string {
 	resizeFunc := m.Settings.Sampling.Function
 	refImg := resize.Resize(uint(width)*2, uint(height)*2, input, resizeFunc)
 
-	_, colorPalette = m.Settings.Colors.Palette.GetCurrent()
+	_, palette := m.Settings.Colors.Palette.GetCurrent()
 
 	if m.Settings.Colors.IsDithered() {
-		ditherer := dither.NewDitherer(colorPalette)
+		ditherer := dither.NewDitherer(palette)
 		ditherer.Matrix = m.Settings.Colors.Matrix()
 		if m.Settings.Colors.IsSerpentine() {
 			ditherer.Serpentine = true
@@ -64,7 +67,12 @@ func (m Renderer) processUnicode(input image.Image) string {
 
 			lipFg := lipgloss.Color(pFg.Hex())
 			lipBg := lipgloss.Color(pBg.Hex())
-			style := lipgloss.NewStyle().Foreground(lipFg).Background(lipBg)
+
+			style := lipgloss.NewStyle().Foreground(lipFg)
+			if _, _, mode := m.Settings.Characters.Selected(); mode == characters.TwoColor {
+				style = style.Copy().Background(lipBg)
+			}
+
 			row[x/2] = style.Render(string(r))
 		}
 		rows[y/2] = lipgloss.JoinHorizontal(lipgloss.Top, row...)
@@ -76,8 +84,26 @@ func (m Renderer) processUnicode(input image.Image) string {
 // find the best block character and foreground and background colors to match
 // a set of 4 pixels. return
 func (m Renderer) getBlock(r1, r2, r3, r4 colorful.Color) (r rune, fg, bg colorful.Color) {
+	var blockFuncs map[rune]blockFunc
+	switch _, charSet, _ := m.Settings.Characters.Selected(); charSet {
+	case characters.UnicodeFull:
+		blockFuncs = m.fullBlockFuncs
+	case characters.UnicodeHalf:
+		blockFuncs = m.halfBlockFuncs
+	case characters.UnicodeQuart:
+		blockFuncs = m.quarterBlockFuncs
+	case characters.UnicodeShadeLight:
+		blockFuncs = m.shadeLightBlockFuncs
+	case characters.UnicodeShadeMed:
+		blockFuncs = m.shadeMedBlockFuncs
+	case characters.UnicodeShadeHeavy:
+		blockFuncs = m.shadeHeavyBlockFuncs
+	case characters.UnicodeShadeAll:
+		blockFuncs = m.shadeAllBlockFuncs
+	}
+
 	minDist := 100.0
-	for bRune, bFunc := range m.blockFuncs {
+	for bRune, bFunc := range blockFuncs {
 		f, b, dist := bFunc(r1, r2, r3, r4)
 		if dist < minDist {
 			minDist = dist
@@ -98,7 +124,9 @@ func (m Renderer) avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 	avg := colorful.Color{R: rSum / count, G: gSum / count, B: bSum / count}
 
 	if m.Settings.Colors.IsLimited() {
-		paletteAvg := colorPalette.Convert(avg)
+		_, palette := m.Settings.Colors.Palette.GetCurrent()
+
+		paletteAvg := palette.Convert(avg)
 		avg, _ = colorful.MakeColor(paletteAvg)
 	}
 
@@ -108,46 +136,4 @@ func (m Renderer) avgCol(colors ...colorful.Color) (colorful.Color, float64) {
 		totalDist += math.Pow(col.DistanceCIEDE2000(avg), 2)
 	}
 	return avg, totalDist
-}
-
-func (m Renderer) calcTop(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r1, r2)
-	bg, bDist := m.avgCol(r3, r4)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r2, r4)
-	bg, bDist := m.avgCol(r1, r3)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcDiagonal(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r2, r3)
-	bg, bDist := m.avgCol(r1, r4)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcBotLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r3)
-	bg, bDist := m.avgCol(r1, r2, r4)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcTopLeft(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r1)
-	bg, bDist := m.avgCol(r2, r3, r4)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcTopRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r2)
-	bg, bDist := m.avgCol(r1, r3, r4)
-	return fg, bg, fDist + bDist
-}
-
-func (m Renderer) calcBotRight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r4)
-	bg, bDist := m.avgCol(r1, r2, r3)
-	return fg, bg, fDist + bDist
 }
