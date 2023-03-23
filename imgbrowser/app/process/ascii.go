@@ -10,17 +10,18 @@ import (
 	"github.com/makeworld-the-better-one/dither/v2"
 	"github.com/nfnt/resize"
 
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/size"
 )
 
 // A list of Ascii characters by ascending brightness
-var asciiChars = []rune("`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@")
-var asciiAZChars = []rune("rczsLTvJFiCfItluneoZYxjyaESwqkPhdVpOGbUAKXHmRDBgMNWQ")
-var asciiNumChars = []rune("7315269480")
-var asciiSpecChars = []rune("`.-':_,^=;><+!*/?)(|{}[]#$%&@")
-var unicodeShadeChars = []rune{'░', '▒', '▓'}
+var asciiChars = []rune(" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@")
+var asciiAZChars = []rune(" rczsLTvJFiCfItluneoZYxjyaESwqkPhdVpOGbUAKXHmRDBgMNWQ")
+var asciiNumChars = []rune(" 7315269480")
+var asciiSpecChars = []rune(" `.-':_,^=;><+!*/?)(|{}[]#$%&@")
+var unicodeShadeChars = []rune{' ', '░', '▒', '▓'}
 
-func (m Renderer) processAscii(input image.Image) string {
+func (m Renderer) processAsciiOld(input image.Image) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
 
 	dimensionType, width, height := m.Settings.Size.Info()
@@ -48,6 +49,19 @@ func (m Renderer) processAscii(input image.Image) string {
 		refImg = ditherer.Dither(refImg)
 	}
 
+	var chars []rune
+	_, charMode, _ := m.Settings.Characters.Selected()
+	switch charMode {
+	case characters.AzAscii:
+		chars = asciiAZChars
+	case characters.NumAscii:
+		chars = asciiNumChars
+	case characters.SpecAscii:
+		chars = asciiSpecChars
+	case characters.AllAscii:
+		chars = asciiChars
+	}
+
 	content := ""
 	rows := make([]string, height)
 	row := make([]string, width)
@@ -66,10 +80,7 @@ func (m Renderer) processAscii(input image.Image) string {
 			lipFg := lipgloss.Color(fg.Hex())
 			style := lipgloss.NewStyle().Foreground(lipFg)
 
-			//chars := asciiChars
-			chars := unicodeShadeChars
 			char := chars[int(brightness*float64(len(chars)-1))]
-			char = '▒'
 
 			row[x] = style.Render(string(char))
 		}
@@ -79,7 +90,7 @@ func (m Renderer) processAscii(input image.Image) string {
 	return content
 }
 
-func (m Renderer) processAsciiOld(input image.Image) string {
+func (m Renderer) processAscii(input image.Image) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
 
 	dimensionType, width, height := m.Settings.Size.Info()
@@ -107,6 +118,19 @@ func (m Renderer) processAsciiOld(input image.Image) string {
 		refImg = ditherer.Dither(refImg)
 	}
 
+	var chars []rune
+	_, charMode, _ := m.Settings.Characters.Selected()
+	switch charMode {
+	case characters.AzAscii:
+		chars = asciiAZChars
+	case characters.NumAscii:
+		chars = asciiNumChars
+	case characters.SpecAscii:
+		chars = asciiSpecChars
+	case characters.AllAscii:
+		chars = asciiChars
+	}
+
 	content := ""
 	rows := make([]string, height)
 	row := make([]string, width)
@@ -124,8 +148,6 @@ func (m Renderer) processAsciiOld(input image.Image) string {
 			lipBg := lipgloss.Color(bg.Hex())
 			style := lipgloss.NewStyle().Foreground(lipFg).Background(lipBg)
 
-			//chars := asciiChars
-			chars := unicodeShadeChars
 			index := int(brightness * float64(len(chars)-1))
 			char := chars[index]
 			charString := string(char)

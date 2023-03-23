@@ -30,8 +30,8 @@ func menuItems() []list.Item {
 	return items
 }
 
-func newMenu(items []list.Item) list.Model {
-	l := list.New(items, NewDelegate(), 30, 30)
+func newMenu(items []list.Item, height int) list.Model {
+	l := list.New(items, NewDelegate(), 30, height)
 	l.SetShowHelp(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowTitle(false)

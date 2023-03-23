@@ -15,7 +15,7 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/size"
 )
 
-func (m Renderer) processBlocks(input image.Image) string {
+func (m Renderer) processUnicode(input image.Image) string {
 	imgW, imgH := float32(input.Bounds().Dx()), float32(input.Bounds().Dy())
 
 	dimensionType, width, height := m.Settings.Size.Info()
