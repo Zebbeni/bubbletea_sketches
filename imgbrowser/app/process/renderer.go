@@ -7,6 +7,7 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 )
 
 type Renderer struct {
@@ -110,44 +111,71 @@ func (m Renderer) getLightDarkPaletted(light, dark colorful.Color) (colorful.Col
 }
 
 func (m Renderer) calcLight(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	_, dark := lightDark(r1, r2, r3, r4)
-	avg := m.avgColTrue(r1, r2, r3, r4)
+	if _, _, fgBg := m.Settings.Characters.Selected(); fgBg == characters.OneColor {
+		avg, dist := m.avgCol(r1, r2, r3, r4)
+		return avg, colorful.Color{}, math.Min(1.0, math.Abs(dist-1))
+	} else {
+		_, dark := lightDark(r1, r2, r3, r4)
+		avg := m.avgColTrue(r1, r2, r3, r4)
 
-	if m.Settings.Colors.IsLimited() {
-		avg, dark = m.getLightDarkPaletted(avg, dark)
+		if m.Settings.Colors.IsLimited() {
+			avg, dark = m.getLightDarkPaletted(avg, dark)
+		}
+
+		dist := avg.DistanceLuv(black)
+		return avg, dark, math.Min(1.0, math.Abs(dist))
 	}
-
-	dist := avg.DistanceLuv(black)
-	return avg, dark, math.Min(1.0, math.Abs(dist))
 }
 
 func (m Renderer) calcMed(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	_, dark := lightDark(r1, r2, r3, r4)
-	avg := m.avgColTrue(r1, r2, r3, r4)
+	if _, _, fgBg := m.Settings.Characters.Selected(); fgBg == characters.OneColor {
+		avg, dist := m.avgCol(r1, r2, r3, r4)
+		return avg, colorful.Color{}, math.Min(1.0, math.Abs(dist-1))
+	} else {
+		_, dark := lightDark(r1, r2, r3, r4)
+		avg := m.avgColTrue(r1, r2, r3, r4)
 
-	if m.Settings.Colors.IsLimited() {
-		avg, dark = m.getLightDarkPaletted(avg, dark)
+		if m.Settings.Colors.IsLimited() {
+			avg, dark = m.getLightDarkPaletted(avg, dark)
+		}
+
+		dist := avg.DistanceLuv(black)
+		return avg, dark, math.Min(1.0, math.Abs(dist-0.5))
 	}
-
-	dist := avg.DistanceLuv(black)
-	return avg, dark, math.Min(1.0, math.Abs(dist-0.5))
 }
 
 func (m Renderer) calcHeavy(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	_, dark := lightDark(r1, r2, r3, r4)
-	avg := m.avgColTrue(r1, r2, r3, r4)
+	if _, _, fgBg := m.Settings.Characters.Selected(); fgBg == characters.OneColor {
+		avg, dist := m.avgCol(r1, r2, r3, r4)
+		return avg, colorful.Color{}, math.Min(1.0, math.Abs(dist-1))
+	} else {
+		_, dark := lightDark(r1, r2, r3, r4)
+		avg := m.avgColTrue(r1, r2, r3, r4)
 
-	if m.Settings.Colors.IsLimited() {
-		avg, dark = m.getLightDarkPaletted(avg, dark)
+		if m.Settings.Colors.IsLimited() {
+			avg, dark = m.getLightDarkPaletted(avg, dark)
+		}
+
+		dist := avg.DistanceLuv(black)
+		return avg, dark, math.Min(1.0, math.Abs(dist-1))
 	}
-
-	dist := avg.DistanceLuv(black)
-	return avg, dark, math.Min(1.0, math.Abs(dist-1))
 }
 
 func (m Renderer) calcFull(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {
-	fg, fDist := m.avgCol(r1, r2)
-	return fg, colorful.Color{}, fDist
+	if _, _, fgBg := m.Settings.Characters.Selected(); fgBg == characters.OneColor {
+		avg, _ := m.avgCol(r1, r2, r3, r4)
+		return avg, colorful.Color{}, 1.0
+	} else {
+		_, dark := lightDark(r1, r2, r3, r4)
+		avg := m.avgColTrue(r1, r2, r3, r4)
+
+		if m.Settings.Colors.IsLimited() {
+			avg, dark = m.getLightDarkPaletted(avg, dark)
+		}
+
+		dist := avg.DistanceLuv(black)
+		return avg, dark, math.Min(1.0, math.Abs(dist-1))
+	}
 }
 
 func (m Renderer) calcTop(r1, r2, r3, r4 colorful.Color) (colorful.Color, colorful.Color, float64) {

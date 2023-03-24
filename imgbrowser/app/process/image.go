@@ -11,7 +11,7 @@ import (
 	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 )
 
-const PROPORTION = 0.46
+const PROPORTION = 0.44
 
 var (
 	black = colorful.Color{}
