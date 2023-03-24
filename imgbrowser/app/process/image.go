@@ -5,10 +5,19 @@ import (
 	"image"
 	"os"
 
-	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/settings"
+	"github.com/lucasb-eyer/go-colorful"
+
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options"
+	"github.com/Zebbeni/bubbletea_sketches/imgbrowser/controls/options/characters"
 )
 
-func RenderImageFile(s settings.Model, imgFilePath string) string {
+const PROPORTION = 0.44
+
+var (
+	black = colorful.Color{}
+)
+
+func RenderImageFile(s options.Model, imgFilePath string) string {
 	if imgFilePath == "" {
 		return "Choose an image to render"
 	}
@@ -26,6 +35,14 @@ func RenderImageFile(s settings.Model, imgFilePath string) string {
 	}
 
 	renderer := New(s)
-	imgString := renderer.process(img, 35)
+	imgString := renderer.process(img)
 	return imgString
+}
+
+func (m Renderer) process(input image.Image) string {
+	mode, _, _ := m.Settings.Characters.Selected()
+	if mode == characters.Ascii {
+		return m.processAscii(input)
+	}
+	return m.processUnicode(input)
 }
